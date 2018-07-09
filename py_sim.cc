@@ -86,7 +86,17 @@ int main() {
 
   //  331  eta'                                1   0   0    0.95778
   //          6     1   0.0001076    0       13      -13       22
-  // TODO: fix eta' branching ratio
+  // Manually set eta' bRatio since there's no electron decay ratio comparison.
+  // Use a linear approximation instead of a quadratic.
+  vector<vector<double>> etaprime_pts{
+      {0.5 * pythia.particleData.m0(331),
+       0.},                               // {0.5*(decaying hadron mass), 0}
+      {pythia.particleData.m0(13), 0.}};  // {m_mu, mu branch_ratio}
+  etaprime_pts[1][1] =
+      pythia.particleData.particleDataEntryPtr(331)->channel(6).bRatio();
+  std::ostringstream strsetaprime;
+  strsetaprime << poly_approx(etaprime_pts, mCPmass);
+  pythia.readString("331:6:bRatio = " + strsetaprime.str());
 
   // 333  phi                                 3   0   0    1.01946
   //          8     1   0.0002956    0       11      -11
@@ -155,8 +165,8 @@ int main() {
   // initialize polynomial points to approximate new branching ratio
   vector<vector<double>> para_pts{
       {0., 0.},  // {0.5*(decaying hadron mass - non-muon product masses), 0}
-      {pythia.particleData.m0(11), 0.},   // {e_m, e branch_ratio}
-      {pythia.particleData.m0(13), 0.}};  // {mu_m, mu branch_ratio}
+      {pythia.particleData.m0(11), 0.},   // {m_e, e branch_ratio}
+      {pythia.particleData.m0(13), 0.}};  // {m_mu, mu branch_ratio}
 
   // loop through decay channels and set new branching ratios
   for (vector<int> ch : chs) {
