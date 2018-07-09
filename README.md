@@ -13,3 +13,7 @@ Compilation and Running
 3. Ensure that ROOT is installed and the `root-config` utility is available in the commandline. This can be ensured by sourcing `thisroot.sh` in your ROOT installation's bin directory.
 4. Compile `py_sim` by running `make all` in the project directory.
 5. Run `source environ.sh` to set up the `xmldoc` directory so you can run the compiled binary. The compiled binary should now run as expected with `./py_sim`.
+
+Analysis of Data
+----------------
+A ROOT macro, [`ptcut.cc`](../master/ptcut.cc), is included to help calculate the number of muons that pass a pT cut (greater than or equal to given pT cut). To run the macro, run `root -b -q -l "ptcut.cc++O(0.0)"` with the desired pT cut in GeV in parentheses. The file can be edited to change the `.root` file the macro is run on.
