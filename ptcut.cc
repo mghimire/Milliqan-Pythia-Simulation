@@ -1,9 +1,10 @@
 #include <TFile.h>
+#include <TMath.h>
 #include <TROOT.h>
 #include <TTree.h>
 #include <iostream>
 
-void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
+void ptcut(Double_t pTcut = 0.0, Int_t nevents=1000, TString infile = "out.root") {
   // read in output file
   TFile *EventFile = new TFile(infile, "READ");
   TTree *sourceTree = (TTree *)EventFile->Get("EventTree");
@@ -16,5 +17,7 @@ void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
     sourceTree->GetEntry(i);
     if (pT >= pTcut) num_passed_cut++;
   }
+  // cout.precision(10);
   cout << num_passed_cut << " muons passed pT cut of " << pTcut << endl;
+  cout << num_passed_cut/(1.*nevents) << "+-" << TMath::Sqrt(num_passed_cut)/(1.*nevents) << " mCP/event" << endl;
 }

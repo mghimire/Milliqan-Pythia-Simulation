@@ -16,4 +16,4 @@ Compilation and Running
 
 Analysis of Data
 ----------------
-A ROOT macro, [`ptcut.cc`](../master/ptcut.cc), is included to help calculate the number of muons that pass a pT cut (greater than or equal to given pT cut). To run the macro, run `root -b -q -l 'ptcut.cc(0.0,"out.root")'` with the desired pT cut in GeV and root file to run on in parentheses.
+A ROOT macro, [`ptcut.cc`](../master/ptcut.cc), is included to help calculate the number of muons that pass a pT cut (greater than or equal to given pT cut). To run the macro, run `root -b -q -l 'ptcut.cc(0.0,1000,"out.root")'` with the first argument being the desired pT cut in GeV, the second the number of events Pythia simulated, and the third the root file to run on.
