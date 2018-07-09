@@ -12,11 +12,12 @@ using namespace Pythia8;
 
 // struct of information from each event that will be filled in ROOT tree
 typedef struct {
-  Int_t mother_id;   // particle ID of mother
-  Double_t pT;       // pT of mCP ("muon")
-  Double_t eta;      // eta (pseudorapidity) of mCP ("muon")
-  Bool_t charge;     // true, +1; false, -1
-  UInt_t event_num;  // event number muon came from
+  Int_t mother_id; // particle ID of mother
+  Double_t pT; // pT of mCP ("muon")
+  Double_t eta; // eta (pseudorapidity) of mCP ("muon")
+  Double_t ev_pTHat; // event's pTHat
+  Bool_t charge; // true, +1; false, -1
+  UInt_t event_num; // event number muon came from
 } mCP_event;
 
 // Takes vector of {dbl,dbl} pts and returns unique polynomial approx at
@@ -208,6 +209,7 @@ int main() {
   t1.Branch("mother_id", &cpevent.mother_id, "mother_id/I");
   t1.Branch("pT", &cpevent.pT, "pT/D");
   t1.Branch("eta", &cpevent.eta, "eta/D");
+  t1.Branch("ev_pTHat", &cpevent.ev_pTHat, "ev_pTHat/D");
   t1.Branch("charge", &cpevent.charge, "charge/O");
   t1.Branch("event_num", &cpevent.event_num, "event_num/i");
 
@@ -251,6 +253,7 @@ int main() {
       cpevent.mother_id = pythia.event[pythia.event[m].mother1()].id();
       cpevent.eta = pythia.event[m].eta();
       cpevent.pT = pythia.event[m].pT();
+      cpevent.ev_pTHat = pythia.info.pTHat();
       cpevent.event_num = iEvent;
       t1.Fill();
 
@@ -268,6 +271,11 @@ int main() {
 
   // output pythia stats
   pythia.stat();
+
+  // set TTree weight to normalize to cross section and per event
+  double sigma = pythia.info.sigmaGen(); // total cross section 
+  double weightsum = pythia.info.weightSum(); // sum of weights (# events)
+  t1.SetWeight(sigma/weightsum);
 
   // write the tree to disk
   t1.Write();
