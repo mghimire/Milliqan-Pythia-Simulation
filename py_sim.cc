@@ -36,7 +36,7 @@ int main() {
   int nEvent = 1000;
   // mCP mass in GeV
   double mCPmass = 0.05;
-  // pT cut in GeV
+  // jet pT cut in GeV
   double pTcut = 100.;
   // name of output root file with events
   TString output_file = "out.root";
@@ -135,10 +135,10 @@ int main() {
                          ->channel(mu_ch)
                          .bRatio();
     // set new branching ratio using mCP mass and polynomial approximation
-    std::ostringstream strs;
-    strs << poly_approx(para_pts, mCPmass);
+    std::ostringstream strsbRatio;
+    strsbRatio << poly_approx(para_pts, mCPmass);
     pythia.readString(std::to_string(had_id) + ":" + std::to_string(mu_ch) +
-                      ":bRatio = " + strs.str());
+                      ":bRatio = " + strsbRatio.str());
   }
 
   // change muon mass in Pythia to mCP mass
