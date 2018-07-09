@@ -25,4 +25,4 @@ py_sim: $$@.cc $(PREFIX_LIB)/libpythia8.a
 
 clean:
 	@rm -f py_sim;\
-	rm -f *~; rm -f \#*; rm -f core*; rm -f *Dct.*; rm -f *.so;
+	rm -f *~; rm -f *.so; rm -f *.pcm; rm -f *.d

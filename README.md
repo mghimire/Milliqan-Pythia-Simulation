@@ -16,4 +16,4 @@ Compilation and Running
 
 Analysis of Data
 ----------------
-A ROOT macro, [`ptcut.cc`](../master/ptcut.cc), is included to help calculate the number of muons that pass a pT cut (greater than or equal to given pT cut). To run the macro, run `root -b -q -l "ptcut.cc++O(0.0)"` with the desired pT cut in GeV in parentheses. The file can be edited to change the `.root` file the macro is run on.
+A ROOT macro, [`ptcut.cc`](../master/ptcut.cc), is included to help calculate the number of muons that pass a pT cut (greater than or equal to given pT cut). To run the macro, run `root -b -q -l "ptcut.cc(0.0)"` with the desired pT cut in GeV in parentheses. The file can be edited to change the `.root` file the macro is run on.
