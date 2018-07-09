@@ -1,6 +1,10 @@
 Pythia mCP Simulation
 =====================
-This is a Pythia simulation of the hadronic contribution to mCP estimated by modifying the muon mass in Pythia to stand in for mCP and adjusting the hadron branching ratios to muons. The new branching ratio is estimated by fitting a quadratic to the branching ratios of e, mu, and a zero branching ratio when the mCP mass reaches half the decaying hadron mass.
+This is a Pythia simulation of the hadronic contribution to mCP estimated by modifying the muon mass in Pythia to stand in for mCP and adjusting the hadron branching ratios to muons. The new branching ratio is estimated by fitting a quadratic to the branching ratios of e, mu, and a zero branching ratio when the mCP mass reaches half the decaying hadron mass. The main program, `py_sim`, outputs a ROOT TTree of muons pairs from hadron decay along with their pT.
+
+Configuration
+-------------
+To configure the simulation edit the [`py_sim.cc`](../master/py_sim.cc) file before compilation. User-configurable options are at the start of `int main()` and include the number of events, the mCP mass, the pT cut on jets produced, and the name of the output ROOT file.
 
 Compilation and Running
 -----------------------
