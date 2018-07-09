@@ -20,6 +20,8 @@ void ptcut(Double_t pTcut = 0.0, Int_t nevents = 1000,
   }
   // output number of mCP that pass the pT cut
   cout << num_passcut << " mCP passed pT cut of " << pTcut << " GeV" << endl;
+  // output number of Pythia events for clarity
+  cout << nevents << " Pythia events:" << endl;
   // calculate mCP/event that pass the pT cut
   cout << num_passcut / (1. * nevents) << "+-"
        << TMath::Sqrt(num_passcut) / (1. * nevents) << " mCP/event pass cut"
