@@ -12,12 +12,12 @@ using namespace Pythia8;
 
 // struct of information from each event that will be filled in ROOT tree
 typedef struct {
-  Int_t mother_id; // particle ID of mother
-  Double_t pT; // pT of mCP ("muon")
-  Double_t eta; // eta (pseudorapidity) of mCP ("muon")
-  Double_t ev_pTHat; // event's pTHat
-  Bool_t charge; // true, +1; false, -1
-  UInt_t event_num; // event number muon came from
+  Int_t mother_id;    // particle ID of mother
+  Double_t pT;        // pT of mCP ("muon")
+  Double_t eta;       // eta (pseudorapidity) of mCP ("muon")
+  Double_t ev_pTHat;  // event's pTHat
+  Bool_t charge;      // true, +1; false, -1
+  UInt_t event_num;   // event number muon came from
 } mCP_event;
 
 // Takes vector of {dbl,dbl} pts and returns unique polynomial approx at
@@ -85,12 +85,6 @@ int main() {
   chs.push_back({223, 6, 7});
 
   //  331  eta'                                1   0   0    0.95778
-  //          0     1   0.4365815    0      211     -211      221
-  //          1     1   0.2947428    0      113       22
-  //          2     1   0.2172848    0      111      111      221
-  //          3     1   0.0276636    0      223       22
-  //          4     1   0.0219297    0       22       22
-  //          5     1   0.0016900    0      111      111      111
   //          6     1   0.0001076    0       13      -13       22
   // TODO: fix eta' branching ratio
 
@@ -273,9 +267,9 @@ int main() {
   pythia.stat();
 
   // set TTree weight to normalize to cross section and per event
-  double sigma = pythia.info.sigmaGen(); // total cross section 
-  double weightsum = pythia.info.weightSum(); // sum of weights (# events)
-  t1.SetWeight(sigma/weightsum);
+  double sigma = pythia.info.sigmaGen();       // total cross section
+  double weightsum = pythia.info.weightSum();  // sum of weights (# events)
+  t1.SetWeight(sigma / weightsum);
 
   // write the tree to disk
   t1.Write();
