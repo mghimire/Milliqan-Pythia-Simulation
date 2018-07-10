@@ -75,6 +75,17 @@ int main() {
   //          6     1   0.0003100   11       22       13      -13
   //          7     1   0.0000060    0       13      -13
   chs.push_back({221, 5, 6});
+  // Manually set second eta bRatio since there's no electron decay ratio
+  // comparison. Use a linear approximation instead of a quadratic.
+  vector<vector<double>> eta_pts{
+      {0.5 * pythia.particleData.m0(221),
+       0.},                               // {0.5*(decaying hadron mass), 0}
+      {pythia.particleData.m0(13), 0.}};  // {m_mu, mu branch_ratio}
+  eta_pts[1][1] =
+      pythia.particleData.particleDataEntryPtr(221)->channel(7).bRatio();
+  std::ostringstream strseta;
+  strseta << poly_approx(eta_pts, mCPmass);
+  pythia.readString("221:7:bRatio = " + strseta.str());
 
   // 223  omega                               3   0   0    0.78265
   //          4     1   0.0007765   11      111       11      -11
