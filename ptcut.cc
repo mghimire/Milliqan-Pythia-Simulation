@@ -5,7 +5,7 @@
 #include <iostream>
 
 void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
-  // read in output file
+  // read in input file
   TFile *EventFile = new TFile(infile, "READ");
   TTree *sourceTree = (TTree *)EventFile->Get("EventTree");
   unsigned int nentries = sourceTree->GetEntries();
