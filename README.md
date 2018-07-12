@@ -6,6 +6,12 @@ Configuration
 -------------
 To configure the simulation edit the [`py_sim.cc`](../master/py_sim.cc) file before compilation. User-configurable options are at the start of `int main()` and include the number of events, the mCP mass, the pT cut on jets produced, and the name of the output ROOT file.
 
+Options may also be configured through commandline flags.  
+`-n`: Number of events to generate. (default: 1000)  
+`-m`: mCP mass in GeV. (default: 0.05)  
+`-p`: jet pT cut (pTHat) GeV. (default: 50)  
+`-f`: Output file name. (default: "out.root")
+
 Compilation and Running
 -----------------------
 1. Download and compile [Pythia 8](http://home.thep.lu.se/~torbjorn/Pythia.html). If you have appropriate dependencies, this should be as simple as running `make` in the extracted directory. Alternatively, the code can be run in CernVM in which case you can use a version of Pythia on cvmfs.
