@@ -39,7 +39,7 @@ int main() {
   int nEvent = 1000;
   // mCP mass in GeV
   double mCPmass = 0.05;
-  // jet pT cut in GeV
+  // jet pT (pTHat) cut in GeV
   double pTcut = 50.;
   // name of output root file with events
   TString output_file = "outroot";
