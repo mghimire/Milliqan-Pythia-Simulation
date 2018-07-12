@@ -46,6 +46,7 @@ int main(int argc, char **argv) {
   // name of output root file with events
   TString output_file = "out.root";
 
+  // process commandline arguments
   int c;
   while ((c = getopt(argc, argv, "f:n:m:p:")) != -1) switch (c) {
       case 'f':  // output root file name
