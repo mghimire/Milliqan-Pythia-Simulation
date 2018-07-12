@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -35,13 +36,13 @@ double poly_approx(vector<vector<double>> pts, double evalpt) {
 
 int main() {
   // number of events to generate
-  int nEvent = 100;
+  int nEvent = 50000;
   // mCP mass in GeV
-  double mCPmass = 0.05;
+  double mCPmass = 0.01;
   // jet pT cut in GeV
   double pTcut = 50.;
   // name of output root file with events
-  TString output_file = "out.root";
+  TString output_file = "out_10MeV_50k_50GeV.root";
 
   // Generator
   Pythia pythia;
@@ -197,9 +198,16 @@ int main() {
     para_pts[2][1] = pythia.particleData.particleDataEntryPtr(had_id)
                          ->channel(mu_ch)
                          .bRatio();
-    // set new branching ratio using mCP mass and polynomial approximation
+    // calculate new branching ratio using mCP mass and polynomial approximation
+    double sbRatio = poly_approx(para_pts, mCPmass);
+    // exit with error if branching ratio negative
+    if (sbRatio < 0) {
+      cout << "Error: Calculated branching ratio approximation is < 0." << endl;
+      return EXIT_FAILURE;
+    }
+    // set new branching ratio in pythia
     std::ostringstream strsbRatio;
-    strsbRatio << poly_approx(para_pts, mCPmass);
+    strsbRatio << sbRatio;
     pythia.readString(std::to_string(had_id) + ":" + std::to_string(mu_ch) +
                       ":bRatio = " + strsbRatio.str());
   }
@@ -295,5 +303,5 @@ int main() {
   // write the tree to disk
   t1.Write();
 
-  return 0;
+  return EXIT_SUCCESS;
 }
