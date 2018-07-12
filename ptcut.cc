@@ -4,8 +4,7 @@
 #include <TTree.h>
 #include <iostream>
 
-void ptcut(Double_t pTcut = 0.0, Int_t nevents = 1000,
-           TString infile = "out.root") {
+void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
   // read in output file
   TFile *EventFile = new TFile(infile, "READ");
   TTree *sourceTree = (TTree *)EventFile->Get("EventTree");
@@ -18,12 +17,17 @@ void ptcut(Double_t pTcut = 0.0, Int_t nevents = 1000,
     sourceTree->GetEntry(i);
     if (pT >= pTcut) num_passcut++;
   }
-  // output number of mCP that pass the pT cut
-  cout << num_passcut << " mCP passed pT cut of " << pTcut << " GeV" << endl;
-  // output number of Pythia events for clarity
-  cout << nevents << " Pythia events:" << endl;
+  // Get event weight that includes cross section and number of events. Cross
+  // section is in mb.
+  double weight = sourceTree->GetWeight();
+  // adjust weight to calculate mCP seen
+  weight *= 1e-3;         // mb to b
+  weight *= 1e15;         // b to fb
+  weight *= 1e-3 * 1e-3;  // multiply by millicharge^2
+  weight *= 200.0;        // 200 fb^-1
+  weight *= 1e-4;         // milliQan acceptance
   // calculate mCP/event that pass the pT cut
-  cout << num_passcut / (1. * nevents) << "+-"
-       << TMath::Sqrt(num_passcut) / (1. * nevents) << " mCP/event pass cut"
+  cout << num_passcut * weight << "+-" << TMath::Sqrt(num_passcut) * weight
+       << " mCP seen with 200 fb^-1 of data and pT cut of " << pTcut << " GeV"
        << endl;
 }
