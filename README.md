@@ -1,16 +1,18 @@
 Pythia mCP Simulation
 =====================
-This is a Pythia simulation of the hadronic contribution to mCP estimated by modifying the muon mass in Pythia to stand in for mCP and adjusting the hadron branching ratios to muons. The new branching ratio is estimated by fitting a quadratic to the branching ratios of e, mu, and a zero branching ratio when the mCP mass reaches half the decaying hadron mass. The main program, `py_sim`, outputs a ROOT TTree of muon pairs from hadron decay along with their pT with the weight scaled by the cross section (in mb) and total number of events.
+This is a Pythia simulation of the hadronic contribution to mCP estimated by modifying the muon mass in Pythia to stand in for mCP and adjusting the hadron branching ratios to muons. The new branching ratio is estimated by fitting a quadratic to the branching ratios of e, mu, and a zero branching ratio when the mCP mass reaches half the decaying hadron mass. The simulation is of pp collisions at 13 TeV. The main program, `py_sim`, outputs a ROOT TTree of muon pairs from hadron decay along with their pT with the weight scaled by the cross section (in mb) and total number of events.
 
 Configuration
 -------------
-To configure the simulation edit the [`py_sim.cc`](../master/py_sim.cc) file before compilation. User-configurable options are at the start of `int main()` and include the number of events, the mCP mass, the pT cut on jets produced, and the name of the output ROOT file.
+To configure the simulation pass commandline arguments as follows or edit the [`py_sim.cc`](../master/py_sim.cc) file defaults before compilation. User-configurable options are at the start of `main`.
 
-Options may also be configured through commandline flags at runtime.  
+The following commandline flags are available at runtime.  
 `-n`: Number of events to generate. (default: 1000)  
 `-m`: mCP mass in GeV. (default: 0.05)  
-`-p`: jet pT cut (pTHat) GeV. (default: 50)  
-`-f`: Output file name. (default: "out.root")
+`-p`: Jet pT cut (pTHat) in GeV. (default: 50)  
+`-f`: Output ROOT file name. (default: "out.root")
+
+For example, to manually configure with the default options run the program after compilation with `./py_sim -n 1000 -m 0.05 -p 50 -f out.root`.
 
 Compilation and Running
 -----------------------
