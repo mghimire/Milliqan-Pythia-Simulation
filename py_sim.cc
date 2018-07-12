@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <cstdlib>
 #include <sstream>
 #include <string>
@@ -34,7 +35,8 @@ double poly_approx(vector<vector<double>> pts, double evalpt) {
   return output;
 }
 
-int main() {
+int main(int argc, char **argv) {
+  // set default options
   // number of events to generate
   int nEvent = 1000;
   // mCP mass in GeV
@@ -42,7 +44,26 @@ int main() {
   // jet pT (pTHat) cut in GeV
   double pTcut = 50.;
   // name of output root file with events
-  TString output_file = "outroot";
+  TString output_file = "out.root";
+
+  int c;
+  while ((c = getopt(argc, argv, "f:n:m:p:")) != -1) switch (c) {
+      case 'f':  // output root file name
+        output_file = optarg;
+        break;
+      case 'n':  // number of events to generate
+        nEvent = std::stoi(optarg);
+        break;
+      case 'm':  // mCP mass in GeV
+        mCPmass = std::stod(optarg);
+        break;
+      case 'p':  // jet pT (pTHat) cut in GeV
+        pTcut = std::stod(optarg);
+        break;
+      case '?':
+        cout << "Error: Invalid option" << endl;
+        return EXIT_FAILURE;
+    }
 
   // Generator
   Pythia pythia;
