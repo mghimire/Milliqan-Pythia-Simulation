@@ -36,13 +36,13 @@ double poly_approx(vector<vector<double>> pts, double evalpt) {
 
 int main() {
   // number of events to generate
-  int nEvent = 50000;
+  int nEvent = 1000;
   // mCP mass in GeV
-  double mCPmass = 0.01;
+  double mCPmass = 0.05;
   // jet pT cut in GeV
   double pTcut = 50.;
   // name of output root file with events
-  TString output_file = "out_10MeV_50k_50GeV.root";
+  TString output_file = "outroot";
 
   // Generator
   Pythia pythia;
