@@ -24,4 +24,4 @@ Compilation and Running
 
 Analysis of Data
 ----------------
-A ROOT macro, [`ptcut.cc`](../master/ptcut.cc), is included to help calculate the number of mCP that pass a pT cut and would be seen by milliQan. To run the macro, run `root -b -q -l 'ptcut.cc(0.0,"out.root")'` with the first argument being the desired pT cut in GeV and the second argument being the file you want to run on. The calculation for mCP seen is done assuming mCP charge of 1e-3, milliQan acceptance of 1e-4, and 200 fb^-1 of data.
+A ROOT macro, [`ptcut.cc`](../master/ptcut.cc), is included to help calculate the number of mCP that pass a pT cut and would be seen by milliQan. To run the macro, run `root -b -q -l 'ptcut.cc(0.0,"out.root")'` with the first argument being the desired pT cut in GeV and the second argument being the file you want to run on. The calculation for mCP seen is done assuming mCP charge of 1e-3, milliQan acceptance of 1e-4, and 200 fb^-1 of data. This can be easily changed by modifying the macro.
