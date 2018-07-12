@@ -6,7 +6,7 @@ Configuration
 -------------
 To configure the simulation edit the [`py_sim.cc`](../master/py_sim.cc) file before compilation. User-configurable options are at the start of `int main()` and include the number of events, the mCP mass, the pT cut on jets produced, and the name of the output ROOT file.
 
-Options may also be configured through commandline flags.  
+Options may also be configured through commandline flags at runtime.  
 `-n`: Number of events to generate. (default: 1000)  
 `-m`: mCP mass in GeV. (default: 0.05)  
 `-p`: jet pT cut (pTHat) GeV. (default: 50)  
