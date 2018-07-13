@@ -84,64 +84,49 @@ int main(int argc, char **argv) {
   // eanble this to see output of all particle data
   // pythia.particleData.listAll();
 
-  // Vector of hadrons and channels to adjust. Each item contains:
-  // {hadron_id, e_channel, mu_channel, extra particle mass ids to subtract}
-  vector<vector<int>> chs;
+  // Vector of hadrons and channels to adjust the branching ratios with a line.
+  // Each item contains: {hadron_id, decay channel particle id, decay_channel,
+  // optional IDs of non-mCP products}
+  vector<vector<int>> lchs;
+
+  // Vector of hadrons and channels to adjust the branching ratios with a
+  // quadratic. Each item contains: {hadron_id, e_channel, mu_channel, optional
+  // IDs of non-mCP products}
+  vector<vector<int>> qchs;
 
   // 113  rho0                                3   0   0    0.77549
   //          4     1   0.0000471    0       11      -11
   //          5     1   0.0000454    0       13      -13
-  chs.push_back({113, 4, 5});
+  qchs.push_back({113, 4, 5});
 
   // 221  eta                                 1   0   0    0.54785
   //          5     1   0.0069003   11       22       11      -11
   //          6     1   0.0003100   11       22       13      -13
   //          7     1   0.0000060    0       13      -13
-  chs.push_back({221, 5, 6});
-  // Manually set second eta bRatio since there's no electron decay ratio
-  // comparison. Use a linear approximation instead of a quadratic.
-  vector<vector<double>> eta_pts{
-      {0.5 * pythia.particleData.m0(221),
-       0.},                               // {0.5*(decaying hadron mass), 0}
-      {pythia.particleData.m0(13), 0.}};  // {m_mu, mu branch_ratio}
-  eta_pts[1][1] =
-      pythia.particleData.particleDataEntryPtr(221)->channel(7).bRatio();
-  std::ostringstream strseta;
-  strseta << poly_approx(eta_pts, mCPmass);
-  pythia.readString("221:7:bRatio = " + strseta.str());
+  qchs.push_back({221, 5, 6});
+  lchs.push_back({221, 13, 7});
 
   // 223  omega                               3   0   0    0.78265
   //          4     1   0.0007765   11      111       11      -11
   //          5     1   0.0001311   11      111       13      -13
   //          6     1   0.0000728    0       11      -11
   //          7     1   0.0000900    0       13      -13
-  chs.push_back({223, 4, 5, 111});
-  chs.push_back({223, 6, 7});
+  qchs.push_back({223, 4, 5, 111});
+  qchs.push_back({223, 6, 7});
 
   //  331  eta'                                1   0   0    0.95778
   //          6     1   0.0001076    0       13      -13       22
-  // Manually set eta' bRatio since there's no electron decay ratio comparison.
-  // Use a linear approximation instead of a quadratic.
-  vector<vector<double>> etaprime_pts{
-      {0.5 * pythia.particleData.m0(331),
-       0.},                               // {0.5*(decaying hadron mass), 0}
-      {pythia.particleData.m0(13), 0.}};  // {m_mu, mu branch_ratio}
-  etaprime_pts[1][1] =
-      pythia.particleData.particleDataEntryPtr(331)->channel(6).bRatio();
-  std::ostringstream strsetaprime;
-  strsetaprime << poly_approx(etaprime_pts, mCPmass);
-  pythia.readString("331:6:bRatio = " + strsetaprime.str());
+  lchs.push_back({331, 13, 6});
 
   // 333  phi                                 3   0   0    1.01946
   //          8     1   0.0002956    0       11      -11
   //          9     1   0.0002872    0       13      -13
-  //         10     1   0.0001151   11      221       11      -11
-  chs.push_back({333, 8, 9});
+  qchs.push_back({333, 8, 9});
 
   // 443  J/psi                               3   0   0    3.09692
   //          1     1   0.0594000    0       11      -11
   //          2     1   0.0593000    0       13      -13
-  chs.push_back({443, 1, 2});
+  qchs.push_back({443, 1, 2});
 
   // 511  B0               Bbar0              1   0   0    5.27958
   //        264     1   0.0000006   11      311       11      -11
@@ -152,10 +137,10 @@ int main(int argc, char **argv) {
   //        867     2   0.0000025   12        1       -3       13      -13
   //        887     3   0.0000050   12       -3        1       11      -11
   //        888     3   0.0000025   12       -3        1       13      -13
-  chs.push_back({511, 264, 265, 311});
-  chs.push_back({511, 282, 283, 313});
-  chs.push_back({511, 866, 867, 1, -3});
-  chs.push_back({511, 887, 888, -3, 1});
+  qchs.push_back({511, 264, 265, 311});
+  qchs.push_back({511, 282, 283, 313});
+  qchs.push_back({511, 866, 867, 1, -3});
+  qchs.push_back({511, 887, 888, -3, 1});
 
   // 521  B+               B-                 1   3   0    5.27925
   //        224     1   0.0000006   11      321       11      -11
@@ -166,44 +151,81 @@ int main(int argc, char **argv) {
   //        723     2   0.0000025   12        2       -3       13      -13
   //        732     3   0.0000050   12       -3        2       11      -11
   //        733     3   0.0000025   12       -3        2       13      -13
-  chs.push_back({521, 224, 225, 321});
-  chs.push_back({521, 251, 252, 323});
-  chs.push_back({521, 722, 723, 2, -3});
-  chs.push_back({521, 732, 733, -3, 2});
+  qchs.push_back({521, 224, 225, 321});
+  qchs.push_back({521, 251, 252, 323});
+  qchs.push_back({521, 722, 723, 2, -3});
+  qchs.push_back({521, 732, 733, -3, 2});
 
   // 531  B_s0             B_sbar0            1   0   0    5.36677
   //        109     1   0.0000023   11      333       11      -11
   //        110     1   0.0000023   11      333       13      -13
-  chs.push_back({531, 109, 110, 333});
+  qchs.push_back({531, 109, 110, 333});
 
   // 553  Upsilon                             3   0   0    9.46030
   //          2     1   0.0238000    0       11      -11
   //          3     1   0.0248000    0       13      -13
-  chs.push_back({553, 2, 3});
+  qchs.push_back({553, 2, 3});
 
   // 100443  psi(2S)                          3   0   0    3.68
   //          0     1   0.0073500    0       11      -11
   //          1     1   0.0073000    0       13      -13
-  chs.push_back({100443, 0, 1});
+  qchs.push_back({100443, 0, 1});
 
   // 100553  Upsilon(2S)                      3   0   0   10.02
   //          0     1   0.0191000    0       11      -11
   //          1     1   0.0193000    0       13      -13
-  chs.push_back({100553, 0, 1});
+  qchs.push_back({100553, 0, 1});
 
   // 200553  Upsilon(3S)                      3   0   0   10.35
   //          0     1   0.0000000    0       11      -11
   //          1     1   0.0379639    0       13      -13
-  chs.push_back({200553, 0, 1});
+  qchs.push_back({200553, 0, 1});
 
-  // initialize polynomial points to approximate new branching ratio
-  vector<vector<double>> para_pts{
+  // initialize points for linear branching ratio approximation
+  vector<vector<double>> line_pts{
+      {0., 0.},   // {0.5*(decaying hadron mass - non-muon product masses), 0}
+      {0., 0.}};  // {m_decaying_to, branch_ratio decaying to}
+
+  // loop through decay channels and set new branching ratios for linear
+  // approximation
+  for (vector<int> ch : lchs) {
+    int had_id = ch[0];
+    int dec_id = ch[1];
+    int dec_ch = ch[2];
+    double sub_mass = 0.0;
+    // loop through extra particles to subtract mass
+    for (int i = 0; i < ch.size(); i++) {
+      if (i >= 3) sub_mass += pythia.particleData.m0(ch[i]);
+    }
+    // set 0 mass then id mass and branching ratio according to IDs
+    line_pts[0][0] = 0.5 * (pythia.particleData.m0(had_id) - sub_mass);
+    line_pts[1][0] = pythia.particleData.m0(dec_id);
+    line_pts[1][1] = pythia.particleData.particleDataEntryPtr(had_id)
+                         ->channel(dec_ch)
+                         .bRatio();
+    // calculate new branching ratio using mCP mass and polynomial approximation
+    double sbRatio = poly_approx(line_pts, mCPmass);
+    // exit with error if branching ratio negative
+    if (sbRatio < 0) {
+      cout << "Error: Calculated branching ratio approximation is < 0." << endl;
+      return EXIT_FAILURE;
+    }
+    // set new branching ratio in pythia
+    std::ostringstream strsbRatio;
+    strsbRatio << sbRatio;
+    pythia.readString(std::to_string(had_id) + ":" + std::to_string(dec_ch) +
+                      ":bRatio = " + strsbRatio.str());
+  }
+
+  // initialize points for quadratic branching ratio approximation
+  vector<vector<double>> quad_pts{
       {0., 0.},  // {0.5*(decaying hadron mass - non-muon product masses), 0}
       {pythia.particleData.m0(11), 0.},   // {m_e, e branch_ratio}
       {pythia.particleData.m0(13), 0.}};  // {m_mu, mu branch_ratio}
 
-  // loop through decay channels and set new branching ratios
-  for (vector<int> ch : chs) {
+  // loop through decay channels and set new branching ratios for quadratic
+  // approximation
+  for (vector<int> ch : qchs) {
     int had_id = ch[0];
     int e_ch = ch[1];
     int mu_ch = ch[2];
@@ -212,16 +234,16 @@ int main(int argc, char **argv) {
     for (int i = 0; i < ch.size(); i++) {
       if (i >= 3) sub_mass += pythia.particleData.m0(ch[i]);
     }
-    // set 0 mass then e,mu branching ratio according to IDs from above
-    para_pts[0][0] = 0.5 * (pythia.particleData.m0(had_id) - sub_mass);
-    para_pts[1][1] = pythia.particleData.particleDataEntryPtr(had_id)
+    // set 0 mass then e,mu branching ratio according to IDs
+    quad_pts[0][0] = 0.5 * (pythia.particleData.m0(had_id) - sub_mass);
+    quad_pts[1][1] = pythia.particleData.particleDataEntryPtr(had_id)
                          ->channel(e_ch)
                          .bRatio();
-    para_pts[2][1] = pythia.particleData.particleDataEntryPtr(had_id)
+    quad_pts[2][1] = pythia.particleData.particleDataEntryPtr(had_id)
                          ->channel(mu_ch)
                          .bRatio();
     // calculate new branching ratio using mCP mass and polynomial approximation
-    double sbRatio = poly_approx(para_pts, mCPmass);
+    double sbRatio = poly_approx(quad_pts, mCPmass);
     // exit with error if branching ratio negative
     if (sbRatio < 0) {
       cout << "Error: Calculated branching ratio approximation is < 0." << endl;
@@ -242,9 +264,8 @@ int main(int argc, char **argv) {
   // initialize pythia
   pythia.init();
 
-  // (re)make output file
+  // (re)make output file, event tree
   TFile f(output_file, "recreate");
-  // event tree
   TTree t1("EventTree", "events tree");
 
   // variable to store events for tree filling
