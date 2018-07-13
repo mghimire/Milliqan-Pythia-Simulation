@@ -24,10 +24,10 @@ void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
   weight *= 1e-3;         // mb to b
   weight *= 1e15;         // b to fb
   weight *= 1e-3 * 1e-3;  // multiply by millicharge^2
-  weight *= 200.0;        // 200 fb^-1
+  weight *= 300.0;        // 300 fb^-1
   weight *= 1e-4;         // milliQan acceptance
   // calculate mCP/event that pass the pT cut
   cout << num_passcut * weight << "+-" << TMath::Sqrt(num_passcut) * weight
-       << " mCP seen with 200 fb^-1 of data and pT cut of " << pTcut << " GeV"
+       << " mCP seen with 300 fb^-1 of data and pT cut of " << pTcut << " GeV"
        << endl;
 }
