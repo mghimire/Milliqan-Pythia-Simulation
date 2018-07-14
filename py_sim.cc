@@ -47,10 +47,15 @@ int main(int argc, char **argv) {
   double pTcut = 10.;
   // name of output root file with events
   TString output_file = "out.root";
+  // output found particle info
+  bool verbose = false;
 
   // process commandline arguments
   int c;
-  while ((c = getopt(argc, argv, "f:n:m:p:")) != -1) switch (c) {
+  while ((c = getopt(argc, argv, "vf:n:m:p:")) != -1) switch (c) {
+      case 'v':  // verbose, output mCP info 
+        verbose = true;
+        break;
       case 'f':  // output root file name
         output_file = optarg;
         break;
@@ -374,15 +379,16 @@ int main(int argc, char **argv) {
       t1.Fill();
 
       // output found particle information
-      cout << pythia.event[m].name() << ":" << endl;
-      cout << "pT = " << pythia.event[m].pT() << endl;
-      cout << "mother: " << pythia.event[pythia.event[m].mother1()].name()
-           << endl;
-      cout << "mother id = " << pythia.event[m].mother1() << endl;
+      if(verbose) {
+        cout << pythia.event[m].name() << ":" << endl;
+        cout << "pT = " << pythia.event[m].pT() << endl;
+        cout << "mother: " << pythia.event[pythia.event[m].mother1()].name() << endl;
+        cout << "mother id = " << pythia.event[m].mother1() << endl;
+      }
     }
 
     // visual divider between events for output
-    if (mCP_list.size() > 0) cout << "---------" << endl;
+    if (verbose && mCP_list.size() > 0) cout << "---------" << endl;
   }
 
   // output pythia stats
