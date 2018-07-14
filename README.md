@@ -10,8 +10,8 @@ The following commandline flags are available at runtime.
 `-n`: Number of events to generate. (default: 100)  
 `-m`: mCP mass in GeV. (default: 0.05)  
 `-p`: Jet pT cut (pTHat) in GeV. (default: 10)  
-`-f`: Output ROOT file name. (default: "out.root")
-`-v`: Be verbose and output found mCP information 
+`-f`: Output ROOT file name. (default: "out.root")  
+`-v`: Be verbose and output found mCP information
 
 For example, to manually configure with the default options run the program after compilation with `./py_sim -n 1000 -m 0.05 -p 50 -f out.root`.
 
