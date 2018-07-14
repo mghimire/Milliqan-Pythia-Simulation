@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
   // process commandline arguments
   int c;
   while ((c = getopt(argc, argv, "vf:n:m:p:")) != -1) switch (c) {
-      case 'v':  // verbose, output mCP info 
+      case 'v':  // verbose, output mCP info
         verbose = true;
         break;
       case 'f':  // output root file name
@@ -379,10 +379,11 @@ int main(int argc, char **argv) {
       t1.Fill();
 
       // output found particle information
-      if(verbose) {
+      if (verbose) {
         cout << pythia.event[m].name() << ":" << endl;
         cout << "pT = " << pythia.event[m].pT() << endl;
-        cout << "mother: " << pythia.event[pythia.event[m].mother1()].name() << endl;
+        cout << "mother: " << pythia.event[pythia.event[m].mother1()].name()
+             << endl;
         cout << "mother id = " << pythia.event[m].mother1() << endl;
       }
     }
