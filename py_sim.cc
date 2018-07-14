@@ -9,6 +9,7 @@
 #include "TFile.h"
 #include "TROOT.h"
 #include "TTree.h"
+#include "TMath.h"
 
 using namespace Pythia8;
 
@@ -390,13 +391,16 @@ int main(int argc, char **argv) {
   // set TTree weight to normalize to cross section and per event
   double sigma = pythia.info.sigmaGen();       // total cross section
   double weightsum = pythia.info.weightSum();  // sum of weights (# events)
-  t1.SetWeight(sigma / weightsum);
+  double tree_weight = sigma/weightsum;
+  t1.SetWeight(tree_weight);
 
   // write the tree to disk
   t1.Write();
 
   // output number of mCP
-  cout << "Recorded " << t1.GetEntries() << " mCP to " << output_file << endl;
+  int num_mCP = t1.GetEntries();
+  cout << "Recorded " << num_mCP << " mCP to " << output_file << endl;
+  cout << "num_mCP*tree_weight = " << num_mCP*tree_weight << " +- " << TMath::Sqrt(num_mCP)*tree_weight << endl;
 
   return EXIT_SUCCESS;
 }
