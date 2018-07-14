@@ -19,6 +19,7 @@ typedef struct {
   Double_t eta;       // eta (pseudorapidity) of mCP ("muon")
   Double_t ev_pTHat;  // event's pTHat
   Bool_t charge;      // true, +1; false, -1
+  Bool_t from_mu;     // if particle came from muon
   UInt_t event_num;   // event number muon came from
 } mCP_event;
 
@@ -38,11 +39,11 @@ double poly_approx(vector<vector<double>> pts, double evalpt) {
 int main(int argc, char **argv) {
   // set default options
   // number of events to generate
-  int nEvent = 1000;
+  int nEvent = 100;
   // mCP mass in GeV
   double mCPmass = 0.05;
   // jet pT (pTHat) cut in GeV
-  double pTcut = 50.;
+  double pTcut = 10.;
   // name of output root file with events
   TString output_file = "out.root";
 
@@ -93,6 +94,26 @@ int main(int argc, char **argv) {
   // quadratic. Each item contains: {hadron_id, e_channel, mu_channel, optional
   // IDs of non-mCP products}
   vector<vector<int>> qchs;
+
+  // 111  pi0                                 1   0   0    0.13498
+  //          1     1   0.0119800   11       22       11      -11
+  //          2     1   0.0000300   13       11      -11       11      -11
+  lchs.push_back({111, 11, 1});
+
+  // Manually set second pi0 bRatio since it decays to 4 e.
+  vector<vector<double>> pi_pts{
+      {0.25 * pythia.particleData.m0(111),
+       0.},                               // {0.25*(decaying hadron mass), 0}
+      {pythia.particleData.m0(11), 0.}};  // {m_e, e branch_ratio}
+  pi_pts[1][1] =
+      pythia.particleData.particleDataEntryPtr(111)->channel(2).bRatio();
+  std::ostringstream strspi;
+  double pi_bRatio = poly_approx(pi_pts, mCPmass);
+  if (pi_bRatio < 0) {
+    pi_bRatio = 0;
+  }
+  strspi << pi_bRatio;
+  pythia.readString("111:2:bRatio = " + strspi.str());
 
   // 113  rho0                                3   0   0    0.77549
   //          4     1   0.0000471    0       11      -11
@@ -208,7 +229,13 @@ int main(int argc, char **argv) {
     // exit with error if branching ratio negative
     if (sbRatio < 0) {
       cout << "Error: Calculated branching ratio approximation is < 0." << endl;
-      return EXIT_FAILURE;
+      cout << "  Hadron ID is " << had_id << endl;
+      if (had_id != 111)
+        return EXIT_FAILURE;
+      else {
+        sbRatio = 0;
+        cout << "  Hadron is pi0. Set bRatio to 0." << endl;
+      }
     }
     // set new branching ratio in pythia
     std::ostringstream strsbRatio;
@@ -247,6 +274,7 @@ int main(int argc, char **argv) {
     // exit with error if branching ratio negative
     if (sbRatio < 0) {
       cout << "Error: Calculated branching ratio approximation is < 0." << endl;
+      cout << "  Hadron ID is " << had_id << endl;
       return EXIT_FAILURE;
     }
     // set new branching ratio in pythia
@@ -260,6 +288,7 @@ int main(int argc, char **argv) {
   std::ostringstream strsmCP;
   strsmCP << mCPmass;
   pythia.readString("13:m0 = " + strsmCP.str());
+  // pythia.readString("11:m0 = " + strsmCP.str());
 
   // initialize pythia
   pythia.init();
@@ -277,6 +306,7 @@ int main(int argc, char **argv) {
   t1.Branch("eta", &cpevent.eta, "eta/D");
   t1.Branch("ev_pTHat", &cpevent.ev_pTHat, "ev_pTHat/D");
   t1.Branch("charge", &cpevent.charge, "charge/O");
+  t1.Branch("from_mu", &cpevent.from_mu, "from_mu/O");
   t1.Branch("event_num", &cpevent.event_num, "event_num/i");
 
   // loop to generate events
@@ -284,17 +314,16 @@ int main(int argc, char **argv) {
     // generate event, skip if error
     if (!pythia.next()) continue;
 
-    // list of IDs of muons that came in pairs
-    std::vector<int> mulist;
+    // list of IDs of mCP that came in pairs
+    std::vector<int> mCP_list;
 
-    // loop through particles checking daughters for muon pairs
+    // loop through particles checking daughters for mCP pairs
     for (int i = 0; i < pythia.event.size(); ++i) {
+      // check for muon pairs
       bool mu = false;
       bool mubar = false;
-
       // vector of possible muon pairs
       std::vector<int> poss_mupair;
-
       // loop through daughters to find muons
       for (int d : pythia.event[i].daughterList()) {
         // only check if final-state particles
@@ -304,18 +333,38 @@ int main(int argc, char **argv) {
           if (pythia.event[d].idAbs() == 13) poss_mupair.push_back(d);
         }
       }
-
-      // add muons to master list if they came in a pair
+      // add muons to mCP list if they came in a pair
       if (mu && mubar)
-        for (int m : poss_mupair) mulist.push_back(m);
+        for (int m : poss_mupair) mCP_list.push_back(m);
+
+      // check for electron pairs if pi0
+      if (pythia.event[i].id() == 111) {
+        bool e = false;
+        bool ebar = false;
+        // vector of possible e pairs
+        std::vector<int> poss_epair;
+        // loop through daughters to find e
+        for (int d : pythia.event[i].daughterList()) {
+          // only check if final-state particles
+          if (pythia.event[d].isFinal()) {
+            if (pythia.event[d].id() == 11) e = true;
+            if (pythia.event[d].id() == -11) ebar = true;
+            if (pythia.event[d].idAbs() == 11) poss_epair.push_back(d);
+          }
+        }
+        // add e to mCP list if they came in a pair
+        if (e && ebar)
+          for (int m : poss_epair) mCP_list.push_back(m);
+      }
     }
 
-    // set TTree variable with each muon(mCP)'s information then fill it
-    for (int m : mulist) {
-      if (pythia.event[m].id() > 0)  // = 13, mu
+    // set TTree variable with each mCP's information then fill it
+    for (int m : mCP_list) {
+      if (pythia.event[m].id() > 0)  // = 13/11, mu/e
         cpevent.charge = false;      // negatively charged
-      else                           // = -13, mubar
+      else                           // = -13/-11, mubar/ebar
         cpevent.charge = true;       // positively charged
+      cpevent.from_mu = pythia.event[m].idAbs() == 13;
       cpevent.mother_id = pythia.event[pythia.event[m].mother1()].id();
       cpevent.eta = pythia.event[m].eta();
       cpevent.pT = pythia.event[m].pT();
@@ -332,7 +381,7 @@ int main(int argc, char **argv) {
     }
 
     // visual divider between events for output
-    if (mulist.size() > 0) cout << "---------" << endl;
+    if (mCP_list.size() > 0) cout << "---------" << endl;
   }
 
   // output pythia stats
@@ -345,6 +394,9 @@ int main(int argc, char **argv) {
 
   // write the tree to disk
   t1.Write();
+
+  // output number of mCP
+  cout << "Recorded " << t1.GetEntries() << " mCP to " << output_file << endl;
 
   return EXIT_SUCCESS;
 }

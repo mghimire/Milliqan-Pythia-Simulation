@@ -7,9 +7,9 @@ Configuration
 To configure the simulation pass commandline arguments as follows or edit the [`py_sim.cc`](../master/py_sim.cc) file defaults before compilation. User-configurable options are at the start of `main`.
 
 The following commandline flags are available at runtime.  
-`-n`: Number of events to generate. (default: 1000)  
+`-n`: Number of events to generate. (default: 100)  
 `-m`: mCP mass in GeV. (default: 0.05)  
-`-p`: Jet pT cut (pTHat) in GeV. (default: 50)  
+`-p`: Jet pT cut (pTHat) in GeV. (default: 10)  
 `-f`: Output ROOT file name. (default: "out.root")
 
 For example, to manually configure with the default options run the program after compilation with `./py_sim -n 1000 -m 0.05 -p 50 -f out.root`.
