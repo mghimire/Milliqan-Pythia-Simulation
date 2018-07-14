@@ -13,7 +13,7 @@ The following commandline flags are available at runtime.
 `-f FILENAME`: Output ROOT file name. (default: "out.root")  
 `-v`: Be verbose and output found mCP information
 
-For example, to manually configure with the default options run the program after compilation with `./py_sim -n 1000 -m 0.05 -p 50 -f out.root`.
+For example, to manually configure with the default options run the program after compilation with `./py_sim -n 100 -m 0.05 -p 10 -f out.root`.
 
 Compilation and Running
 -----------------------
