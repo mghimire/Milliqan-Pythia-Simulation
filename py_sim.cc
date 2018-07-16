@@ -18,8 +18,8 @@ typedef struct {
   Int_t mother_id;    // particle ID of mother
   Double_t pT;        // pT of mCP ("muon")
   Double_t eta;       // eta (pseudorapidity) of mCP ("muon")
-  Double_t ev_pTHat;  // event's pTHat
-  Bool_t charge;      // true, +1; false, -1
+  Double_t pTHat;     // event's pTHat
+  Double_t charge;    // mCP's charge
   Bool_t from_mu;     // if particle came from muon
   UInt_t event_num;   // event number muon came from
 } mCP_event;
@@ -310,8 +310,8 @@ int main(int argc, char **argv) {
   t1.Branch("mother_id", &cpevent.mother_id, "mother_id/I");
   t1.Branch("pT", &cpevent.pT, "pT/D");
   t1.Branch("eta", &cpevent.eta, "eta/D");
-  t1.Branch("ev_pTHat", &cpevent.ev_pTHat, "ev_pTHat/D");
-  t1.Branch("charge", &cpevent.charge, "charge/O");
+  t1.Branch("pTHat", &cpevent.pTHat, "pTHat/D");
+  t1.Branch("charge", &cpevent.charge, "charge/D");
   t1.Branch("from_mu", &cpevent.from_mu, "from_mu/O");
   t1.Branch("event_num", &cpevent.event_num, "event_num/i");
 
@@ -366,15 +366,12 @@ int main(int argc, char **argv) {
 
     // set TTree variable with each mCP's information then fill it
     for (int m : mCP_list) {
-      if (pythia.event[m].id() > 0)  // = 13/11, mu/e
-        cpevent.charge = false;      // negatively charged
-      else                           // = -13/-11, mubar/ebar
-        cpevent.charge = true;       // positively charged
+      cpevent.charge = pythia.event[m].charge();
       cpevent.from_mu = pythia.event[m].idAbs() == 13;
       cpevent.mother_id = pythia.event[pythia.event[m].mother1()].id();
       cpevent.eta = pythia.event[m].eta();
       cpevent.pT = pythia.event[m].pT();
-      cpevent.ev_pTHat = pythia.info.pTHat();
+      cpevent.pTHat = pythia.info.pTHat();
       cpevent.event_num = iEvent;
       t1.Fill();
 
