@@ -15,13 +15,13 @@ using namespace Pythia8;
 
 // struct of information from each event that will be filled in ROOT tree
 typedef struct {
-  Int_t mother_id;    // particle ID of mother
-  Double_t pT;        // pT of mCP ("muon")
-  Double_t eta;       // eta (pseudorapidity) of mCP ("muon")
-  Double_t pTHat;     // event's pTHat
-  Double_t charge;    // mCP's charge
-  Bool_t from_mu;     // if particle came from muon
-  UInt_t event_num;   // event number muon came from
+  Int_t mother_id;   // particle ID of mother
+  Int_t id;          // ID of mCP (11: e, 13: mu)
+  Double_t pT;       // pT of mCP ("muon")
+  Double_t eta;      // eta (pseudorapidity) of mCP ("muon")
+  Double_t pTHat;    // event's pTHat
+  Double_t charge;   // mCP's charge
+  UInt_t event_num;  // event number muon came from
 } mCP_event;
 
 // Takes vector of {dbl,dbl} pts and returns unique polynomial approx at
@@ -308,11 +308,11 @@ int main(int argc, char **argv) {
 
   // set up TTree branches to read in
   t1.Branch("mother_id", &cpevent.mother_id, "mother_id/I");
+  t1.Branch("id", &cpevent.id, "id/I");
   t1.Branch("pT", &cpevent.pT, "pT/D");
   t1.Branch("eta", &cpevent.eta, "eta/D");
   t1.Branch("pTHat", &cpevent.pTHat, "pTHat/D");
   t1.Branch("charge", &cpevent.charge, "charge/D");
-  t1.Branch("from_mu", &cpevent.from_mu, "from_mu/O");
   t1.Branch("event_num", &cpevent.event_num, "event_num/i");
 
   // loop to generate events
@@ -366,12 +366,12 @@ int main(int argc, char **argv) {
 
     // set TTree variable with each mCP's information then fill it
     for (int m : mCP_list) {
-      cpevent.charge = pythia.event[m].charge();
-      cpevent.from_mu = pythia.event[m].idAbs() == 13;
       cpevent.mother_id = pythia.event[pythia.event[m].mother1()].id();
-      cpevent.eta = pythia.event[m].eta();
+      cpevent.id = pythia.event[m].id();
       cpevent.pT = pythia.event[m].pT();
+      cpevent.eta = pythia.event[m].eta();
       cpevent.pTHat = pythia.info.pTHat();
+      cpevent.charge = pythia.event[m].charge();
       cpevent.event_num = iEvent;
       t1.Fill();
 
@@ -381,7 +381,6 @@ int main(int argc, char **argv) {
         cout << "pT = " << pythia.event[m].pT() << endl;
         cout << "mother: " << pythia.event[pythia.event[m].mother1()].name()
              << endl;
-        cout << "mother id = " << pythia.event[m].mother1() << endl;
       }
     }
 
