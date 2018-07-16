@@ -1,6 +1,6 @@
 Pythia mCP Simulation
 =====================
-This is a Pythia simulation of the hadronic contribution to mCP estimated by modifying the muon mass in Pythia to stand in for mCP and adjusting the hadron branching ratios to muons. The new branching ratio is estimated by fitting a quadratic to the branching ratios of e, mu, and a zero branching ratio when the mCP mass reaches half the decaying hadron mass. The simulation is of pp collisions at 13 TeV. The main program, `py_sim`, outputs a root file containing a TTree of mCP pairs from hadron decay along with their pT, pseudorapidity, and other misc vars. The TTree weight is scaled by the cross section (in mb) and total number of events generated.
+This is a Pythia simulation of the hadronic contribution to mCP estimated by modifying the muon mass in Pythia to stand in for mCP and adjusting the hadron branching ratios to muons. The new branching ratio is estimated by fitting a quadratic to the branching ratios of e, mu, and a zero branching ratio when the mCP mass reaches half the decaying hadron mass. Further, the pi0 branching ratio to e+e- is modified with a linear approximation and the e from pi0 are also chosen to stand in for mCP. The simulation is of pp collisions at 13 TeV. The main program, `py_sim`, outputs a root file containing a TTree of mCP pairs from hadron decay along with their pT, pseudorapidity, and other misc vars. The TTree weight is scaled by the cross section (in mb) and total number of events generated.
 
 Configuration
 -------------
