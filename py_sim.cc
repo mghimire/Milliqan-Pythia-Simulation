@@ -242,16 +242,11 @@ int main(int argc, char **argv) {
                          .bRatio();
     // calculate new branching ratio using mCP mass and polynomial approximation
     double sbRatio = poly_approx(line_pts, mCPmass);
-    // exit with error if branching ratio negative
+    // set to 0 if branching ratio negative
     if (sbRatio < 0) {
-      cout << "Error: Calculated branching ratio approximation is < 0." << endl;
+      cout << "Calculated branching ratio approximation is < 0." << endl;
       cout << "  Hadron ID is " << had_id << endl;
-      if (had_id != 111)
-        return EXIT_FAILURE;
-      else {
-        sbRatio = 0;
-        cout << "  Hadron is pi0. Set bRatio to 0." << endl;
-      }
+      sbRatio = 0;
     }
     // set new branching ratio in pythia
     std::ostringstream strsbRatio;
@@ -289,9 +284,9 @@ int main(int argc, char **argv) {
     double sbRatio = poly_approx(quad_pts, mCPmass);
     // exit with error if branching ratio negative
     if (sbRatio < 0) {
-      cout << "Error: Calculated branching ratio approximation is < 0." << endl;
+      cout << "Calculated branching ratio approximation is < 0." << endl;
       cout << "  Hadron ID is " << had_id << endl;
-      return EXIT_FAILURE;
+      sbRatio = 0;
     }
     // set new branching ratio in pythia
     std::ostringstream strsbRatio;

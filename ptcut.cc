@@ -38,14 +38,20 @@ void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
   // count how many mCP pass a pT cut (in GeV)
   double event_sum = 0.0;
   double event_sumsq = 0.0;
+  double sum_noetacut = 0.0;
   for (unsigned int i = 0; i < nentries; i++) {
     sourceTree->GetEntry(i);
     Double_t abs_eta = TMath::Abs(eta);
-    if (pT > pTcut && abs_eta > low_eta && abs_eta < high_eta) {
-      event_sum += weight;
-      event_sumsq += weight * weight;
+    if (pT > pTcut) {
+      if (abs_eta > low_eta && abs_eta < high_eta) {
+        event_sum += weight;
+        event_sumsq += weight * weight;
+      }
+      sum_noetacut += weight;
     }
   }
+  double acceptance = phi_acceptance/extra_width*0.5*event_sum/sum_noetacut;
+  cout << "acceptance is: " << acceptance << endl;
   // Get event weight that includes cross section and number of events. Cross
   // section is in mb.
   double tree_weight = sourceTree->GetWeight();
