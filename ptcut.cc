@@ -52,8 +52,8 @@ void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
   // adjust weight to calculate mCP seen
   tree_weight *= 1e-3;               // mb to b
   tree_weight *= 1e15;               // b to fb
-  tree_weight *= charge * charge;    // multiply by millicharge^2
   tree_weight *= data;               // data in fb^-1
+  tree_weight *= charge * charge;    // multiply by millicharge^2
   tree_weight *= phi_acceptance;     // phi acceptance
   tree_weight *= 1.0 / extra_width;  // adjust for large eta width
   tree_weight *= 0.5;                // adjust for having both + and - eta
