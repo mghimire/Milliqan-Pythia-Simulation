@@ -78,8 +78,8 @@ int main(int argc, char **argv) {
   Pythia pythia;
 
   // Use random seed each run
-  pythia.readString("Random.setSeed = on");
-  pythia.readString("Random.seed = 0");
+  pythia.readString("Random:setSeed = on");
+  pythia.readString("Random:seed = 0");
 
   // Turn on all hard QCD processes
   pythia.readString("HardQCD:all = on");
@@ -95,7 +95,7 @@ int main(int argc, char **argv) {
   pythia.readString("PhaseSpace:pTHatMin = " + strspT.str());
 
   // reweight events by power in pT to get more favorable spectrum
-  pythia.readString("PhaseSpace:bias2Selection = on");
+  pythia.readString("PhaseSpace:bias2Selection = off");
   pythia.readString("PhaseSpace:bias2SelectionPow = 1.1");
 
   // eanble this to see output of all particle data
