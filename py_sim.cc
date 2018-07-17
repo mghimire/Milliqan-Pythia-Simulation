@@ -17,8 +17,8 @@ using namespace Pythia8;
 typedef struct {
   Int_t mother_id;   // particle ID of mother
   Int_t id;          // ID of mCP (11: e, 13: mu)
-  Double_t pT;       // pT of mCP ("muon")
-  Double_t eta;      // eta (pseudorapidity) of mCP ("muon")
+  Double_t pT;       // pT of mCP
+  Double_t eta;      // eta (pseudorapidity) of mCP
   Double_t pTHat;    // event's pTHat
   Double_t weight;   // event's weight (normally 1)
   Double_t charge;   // mCP's charge
