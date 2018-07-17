@@ -20,6 +20,7 @@ typedef struct {
   Double_t pT;       // pT of mCP ("muon")
   Double_t eta;      // eta (pseudorapidity) of mCP ("muon")
   Double_t pTHat;    // event's pTHat
+  Double_t weight;   // event's weight (normally 1)
   Double_t charge;   // mCP's charge
   UInt_t event_num;  // event number muon came from
 } mCP_event;
@@ -75,6 +76,11 @@ int main(int argc, char **argv) {
 
   // Generator
   Pythia pythia;
+
+  // Use random seed each run
+  pythia.readString("Random.setSeed = on");
+  pythia.readString("Random.seed = 0");
+
   // Turn on all hard QCD processes
   pythia.readString("HardQCD:all = on");
 
@@ -87,6 +93,10 @@ int main(int argc, char **argv) {
   std::ostringstream strspT;
   strspT << pTcut;
   pythia.readString("PhaseSpace:pTHatMin = " + strspT.str());
+
+  // reweight events by power in pT to get more favorable spectrum
+  pythia.readString("PhaseSpace:bias2Selection = on");
+  pythia.readString("PhaseSpace:bias2SelectionPow = 1.1");
 
   // eanble this to see output of all particle data
   // pythia.particleData.listAll();
@@ -312,6 +322,7 @@ int main(int argc, char **argv) {
   t1.Branch("pT", &cpevent.pT, "pT/D");
   t1.Branch("eta", &cpevent.eta, "eta/D");
   t1.Branch("pTHat", &cpevent.pTHat, "pTHat/D");
+  t1.Branch("weight", &cpevent.weight, "weight/D");
   t1.Branch("charge", &cpevent.charge, "charge/D");
   t1.Branch("event_num", &cpevent.event_num, "event_num/i");
 
@@ -371,6 +382,7 @@ int main(int argc, char **argv) {
       cpevent.pT = pythia.event[m].pT();
       cpevent.eta = pythia.event[m].eta();
       cpevent.pTHat = pythia.info.pTHat();
+      cpevent.weight = pythia.info.weight();
       cpevent.charge = pythia.event[m].charge();
       cpevent.event_num = iEvent;
       t1.Fill();
@@ -381,6 +393,7 @@ int main(int argc, char **argv) {
         cout << "pT = " << pythia.event[m].pT() << endl;
         cout << "mother: " << pythia.event[pythia.event[m].mother1()].name()
              << endl;
+        cout << pythia.info.mergingWeight() << endl;
       }
     }
 
@@ -400,11 +413,9 @@ int main(int argc, char **argv) {
   // write the tree to disk
   t1.Write();
 
-  // output number of mCP
+  // output number of events
   int num_mCP = t1.GetEntries();
-  cout << "Recorded " << num_mCP << " mCP to " << output_file << endl;
-  cout << "num_mCP*tree_weight = " << num_mCP * tree_weight << " +- "
-       << TMath::Sqrt(num_mCP) * tree_weight << endl;
+  cout << "Recorded " << num_mCP << " events to " << output_file << endl;
 
   return EXIT_SUCCESS;
 }
