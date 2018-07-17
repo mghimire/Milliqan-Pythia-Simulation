@@ -50,7 +50,8 @@ void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
       sum_noetacut += weight;
     }
   }
-  double acceptance = phi_acceptance/extra_width*0.5*event_sum/sum_noetacut;
+  double acceptance =
+      phi_acceptance / extra_width * 0.5 * event_sum / sum_noetacut;
   cout << "acceptance is: " << acceptance << endl;
   // Get event weight that includes cross section and number of events. Cross
   // section is in mb.
