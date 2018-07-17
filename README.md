@@ -9,11 +9,11 @@ To configure the simulation pass commandline arguments as follows or edit the [`
 The following commandline flags are available at runtime.  
 `-n NUM_EVENTS`: Number of events to generate. (default: 100)  
 `-m MASS`: mCP mass in GeV. (default: 0.05)  
-`-p PT_CUT`: Jet pT cut (pTHat) in GeV. (default: 10)  
+`-p PT_CUT`: Jet pT cut (pTHat) in GeV. (default: 0)  
 `-f FILENAME`: Output ROOT file name. (default: "out.root")  
 `-v`: Be verbose and output found mCP information
 
-For example, to manually configure with the default options run the program after compilation with `./py_sim -n 100 -m 0.05 -p 10 -f out.root`.
+For example, to manually configure with the default options run the program after compilation with `./py_sim -n 100 -m 0.05 -p 0 -f out.root`.
 
 Compilation and Running
 -----------------------

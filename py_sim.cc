@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
   // mCP mass in GeV
   double mCPmass = 0.05;
   // jet pT (pTHat) cut in GeV
-  double pTcut = 10.;
+  double pTcut = 0.0;
   // name of output root file with events
   TString output_file = "out.root";
   // output found particle info
