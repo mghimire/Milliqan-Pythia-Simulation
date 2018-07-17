@@ -393,7 +393,6 @@ int main(int argc, char **argv) {
         cout << "pT = " << pythia.event[m].pT() << endl;
         cout << "mother: " << pythia.event[pythia.event[m].mother1()].name()
              << endl;
-        cout << pythia.info.mergingWeight() << endl;
       }
     }
 
