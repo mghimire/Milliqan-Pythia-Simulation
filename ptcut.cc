@@ -53,7 +53,6 @@ void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
   // calculate detector acceptance
   double acceptance =
       phi_acceptance / extra_width * 0.5 * event_sum / sum_noetacut;
-  cout << "acceptance is: " << acceptance << endl;
   // Get event weight that includes cross section and number of events. Cross
   // section is in mb.
   double tree_weight = sourceTree->GetWeight();
@@ -69,6 +68,7 @@ void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
   // calculate mCP/event that pass the pT cut
   cout << event_sum * event_sum / event_sumsq
        << " equivalent events pass pT cut of " << pTcut << " GeV" << endl;
+  cout << "acceptance is: " << acceptance << endl;
   cout << event_sum * tree_weight << "+-"
        << TMath::Sqrt(event_sumsq) * tree_weight << " mCP seen with " << data
        << " fb^-1 of data" << endl;
