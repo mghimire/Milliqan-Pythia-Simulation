@@ -6,7 +6,7 @@
 
 // calculate pseudorapidity from theta
 Double_t calc_eta(Double_t theta) {
-  return -1.0 * TMath::Log(TMath::Tan(theta / 2));
+  return -1.0 * TMath::Log(TMath::Tan(theta / 2.0));
 }
 
 void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
