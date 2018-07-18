@@ -35,7 +35,7 @@ void ptcut(Double_t pTcut = 0.0, TString infile = "out.root") {
   sourceTree->SetBranchAddress("pT", &pT);
   sourceTree->SetBranchAddress("eta", &eta);
   sourceTree->SetBranchAddress("weight", &weight);
-  // count how many mCP pass a pT cut (in GeV)
+  // count how many weighted mCP pass a pT cut (in GeV) and propagate errors
   double event_sum = 0.0;
   double event_sumsq = 0.0;
   double sum_noetacut = 0.0;
