@@ -17,5 +17,5 @@ do
   for ((i=1;i<=NUM_FILES;i++)); do
     screen -S ${mass//.}_${i} -d -m sh -c "source ~/.profile;./py_sim -p 0 -m ${mass} -n ${EVENTS_PER_FILE} -f data/${mass}_${i}.root"
     # tmux new-session -d -s ${mass//.}_${i} "./py_sim -p 0 -m ${mass} -n ${EVENTS_PER_FILE} -f data/${mass}_${i}.root"
-  done 
+  done
 done
