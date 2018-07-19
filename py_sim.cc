@@ -10,6 +10,7 @@
 #include "TMath.h"
 #include "TROOT.h"
 #include "TTree.h"
+#include "TVectorD.h"
 
 using namespace Pythia8;
 
@@ -400,9 +401,20 @@ int main(int argc, char **argv) {
   pythia.stat();
 
   // set TTree weight to normalize to cross section and per event
-  double sigma = pythia.info.sigmaGen();       // total cross section
-  double weightsum = pythia.info.weightSum();  // sum of weights (# events)
-  double tree_weight = sigma / weightsum;
+  Double_t sigma = pythia.info.sigmaGen();       // total cross section
+  Double_t sigmaerr = pythia.info.sigmaErr();    // cross section error
+  Double_t weightsum = pythia.info.weightSum();  // sum of weights (# events)
+
+  // calculate tree weight and error
+  Double_t tree_weight = sigma / weightsum;
+  Double_t tree_weight_error = sigmaerr / weightsum;
+
+  // store weight error in TTree
+  TVectorD sig_err(1);
+  sig_err[0] = tree_weight_error;
+  t1.GetUserInfo()->Add(&sig_err);
+
+  // store weight as tree weight
   t1.SetWeight(tree_weight);
 
   // write the tree to disk
@@ -411,6 +423,9 @@ int main(int argc, char **argv) {
   // output number of events
   int num_mCP = t1.GetEntries();
   cout << "Recorded " << num_mCP << " events to " << output_file << endl;
+
+  // ROOT may complain about a TList accessing an already deleted object.
+  // This may be safely ignored.
 
   return EXIT_SUCCESS;
 }
