@@ -409,9 +409,10 @@ int main(int argc, char **argv) {
   Double_t tree_weight = sigma / weightsum;
   Double_t tree_weight_error = sigmaerr / weightsum;
 
-  // store weight error in TTree
-  TVectorD sig_err(1);
+  // store weight error and mass in TTree
+  TVectorD sig_err(2);
   sig_err[0] = tree_weight_error;
+  sig_err[1] = mCPmass;
   t1.GetUserInfo()->Add(&sig_err);
 
   // store weight as tree weight
