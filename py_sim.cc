@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <random>
 
 #include "Pythia8/Pythia.h"
 
@@ -79,8 +80,14 @@ int main(int argc, char **argv) {
   Pythia pythia;
 
   // Use random seed each run
+  std::random_device r;
+  std::mt19937 mt(r());
+  std::uniform_int_distribution<int> uniform_dist(1, 900000000);
+  int ran_seed = uniform_dist(mt);
+  std::ostringstream strsRanSeed;
+  strsRanSeed << ran_seed;
   pythia.readString("Random:setSeed = on");
-  pythia.readString("Random:seed = 0");
+  pythia.readString("Random:seed = " + strsRanSeed.str());
 
   // Turn on all hard QCD processes
   pythia.readString("HardQCD:all = on");
