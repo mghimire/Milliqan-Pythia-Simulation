@@ -11,10 +11,23 @@ Double_t calc_eta(Double_t theta) {
   return -1.0 * TMath::Log(TMath::Tan(theta / 2.0));
 }
 
-void ptcut(Double_t pTcut = 0.0, vector<TString> infiles = {"out.root"}) {
-  // calculation parameters
-  Double_t charge = 1e-3;  // charge in e
-  Double_t data = 300.0;   // 300 fb^-1
+// struct of data that gets analyzed
+typedef struct {
+  Double_t mass;            // mCP mass
+  Double_t equiv_events;    // equivalent # of unweighted events
+  Double_t acceptance;      // milliQan acceptance
+  Double_t acceptance_err;  // acceptance uncertainty
+  Double_t mCP_seen;        // number of mCP seen by milliQan
+  Double_t mCP_seen_err;    // uncertainty in mCP seen
+} mCP_anal;
+
+// calculation parameters
+Double_t charge = 1e-3;  // charge in e
+Double_t data = 300.0;   // 300 fb^-1
+
+mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0,
+                            vector<TString> infiles = {"out.root"}) {
+  mCP_anal analysis;
 
   // calculate eta/phi acceptance
   Double_t det_loc = 43.1 * TMath::Pi() / 180.0;  // detector at 43.1 deg
@@ -47,6 +60,9 @@ void ptcut(Double_t pTcut = 0.0, vector<TString> infiles = {"out.root"}) {
     Double_t tree_weight = sourceTree->GetWeight();
     TVectorD *tree_err_vec = (TVectorD *)sourceTree->GetUserInfo()->At(0);
     Double_t tree_w_err = tree_err_vec[0][0];
+    // also set mCP mass
+    analysis.mass = tree_err_vec[0][1];
+
     sum_invtree_weight += 1.0 / tree_weight;
     sum_invtree_weight_err_sq +=
         TMath::Power(tree_w_err / (tree_weight * tree_weight), 2);
@@ -108,12 +124,25 @@ void ptcut(Double_t pTcut = 0.0, vector<TString> infiles = {"out.root"}) {
   final_reweight *= 1.0 / extra_width;  // adjust for large eta width
   final_reweight *= 0.5;                // adjust for having both + and - eta
 
+  // calc equiv num of events stat-wise if each event had weight 1
+  analysis.equiv_events = event_sum * event_sum / event_sumsq;
+  // set acceptance that was calculated
+  analysis.acceptance = acceptance;
+  analysis.acceptance_err = acceptance_error;
   // calculate mCP/event that pass the pT cut
-  // output equiv num of events stat-wise if each event had weight 1
-  cout << event_sum * event_sum / event_sumsq
-       << " equivalent events pass pT cut of " << pTcut << " GeV" << endl;
-  cout << "acceptance is: " << acceptance << "+-" << acceptance_error << endl;
-  cout << event_sum_reweight * final_reweight << "+-"
-       << event_sum_reweight_error * final_reweight << " mCP seen with " << data
-       << " fb^-1 of data" << endl;
+  analysis.mCP_seen = event_sum_reweight * final_reweight;
+  analysis.mCP_seen_err = event_sum_reweight_error * final_reweight;
+  return analysis;
+}
+
+void ptcut(Double_t pTcut = 0.0, vector<TString> infiles = {"out.root"}) {
+  mCP_anal analysis = analyze_pythia_sim(pTcut, infiles);
+  // output analysis calculated
+  cout << "mCP mass is " << analysis.mass << " GeV" << endl;
+  cout << analysis.equiv_events << " equivalent events pass pT cut of " << pTcut
+       << " GeV" << endl;
+  cout << "acceptance is: " << analysis.acceptance << "+-"
+       << analysis.acceptance_err << endl;
+  cout << analysis.mCP_seen << "+-" << analysis.mCP_seen_err
+       << " mCP seen with " << data << " fb^-1 of data" << endl;
 }
