@@ -95,6 +95,7 @@ int main(int argc, char **argv) {
   pythia.readString("PhaseSpace:pTHatMin = " + strspT.str());
 
   // reweight events by power in pT to get more favorable spectrum
+  // setting to off will put event weights back to 1
   pythia.readString("PhaseSpace:bias2Selection = on");
   pythia.readString("PhaseSpace:bias2SelectionPow = 1.1");
 
