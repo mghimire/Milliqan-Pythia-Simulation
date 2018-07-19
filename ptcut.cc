@@ -6,11 +6,6 @@
 #include <iostream>
 #include <vector>
 
-// calculate pseudorapidity from theta
-Double_t calc_eta(Double_t theta) {
-  return -1.0 * TMath::Log(TMath::Tan(theta / 2.0));
-}
-
 // struct of data that gets analyzed
 typedef struct {
   Double_t mass;            // mCP mass
@@ -24,6 +19,11 @@ typedef struct {
 // calculation parameters
 Double_t charge = 1e-3;  // charge in e
 Double_t data = 300.0;   // 300 fb^-1
+
+// calculate pseudorapidity from theta
+Double_t calc_eta(Double_t theta) {
+  return -1.0 * TMath::Log(TMath::Tan(theta / 2.0));
+}
 
 mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0,
                             vector<TString> infiles = {"out.root"}) {
