@@ -3,12 +3,14 @@
 #include <TROOT.h>
 #include <TTree.h>
 #include <TVectorD.h>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <vector>
 #include "ptcut.cc"
 
 // load ptcut.cc macro to do analysis as mCP_anal struct defined there
-void plotgraph(Double_t pTcut = 0.0) {
+void plotgraph(Double_t pTcut = 1.0) {
   // load up vectors of the masses we have files for and the number of files of
   // each mass
   std::vector<TString> masses;
@@ -48,13 +50,36 @@ void plotgraph(Double_t pTcut = 0.0) {
     for (int j = 1; j <= num_files[i]; j++) {
       mass_files.push_back("data/" + masses[i] + "_" + j + ".root");
     }
-    files.push_back(mass_files);
+    if (mass_files.size() > 0) files.push_back(mass_files);
   }
 
-  // run analysis on each file
+  // run analysis on each mass size
   std::vector<mCP_anal> analyses;
   for (std::size_t i = 0; i < files.size(); i++) {
     mCP_anal analysis = analyze_pythia_sim(pTcut, files[i]);
     analyses.push_back(analysis);
   }
+
+  // output mCP pT cut used
+  cout << "mCP pT cut: " << pTcut << " GeV" << endl;
+
+  // output table of analysis results
+  cout << std::setfill('-') << std::setw(33) << "" << std::setfill(' ') << endl;
+  cout << std::setw(7) << "m (GeV)"
+       << " " << std::setw(11) << "mCP seen"
+       << "   " << std::setw(11) << "acceptance" << endl;
+  cout << std::setfill('-') << std::setw(33) << "" << std::setfill(' ') << endl;
+  for (std::size_t i = 0; i < analyses.size(); i++) {
+    mCP_anal anal = analyses[i];
+    std::ostringstream mCP_seen_err;
+    std::ostringstream acceptance_err;
+    mCP_seen_err << "+-" << anal.mCP_seen_err;
+    acceptance_err << "+-" << anal.acceptance_err;
+    cout << std::setw(5) << anal.mass << "   " << std::setw(11) << anal.mCP_seen
+         << "   " << std::setw(11) << anal.acceptance << endl;
+    cout << std::setw(5) << " "
+         << " " << std::setw(13) << mCP_seen_err.str() << " " << std::setw(13)
+         << acceptance_err.str() << endl;
+  }
+  cout << std::setfill('-') << std::setw(33) << "" << std::setfill(' ') << endl;
 }
