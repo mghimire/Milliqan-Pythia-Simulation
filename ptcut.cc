@@ -25,7 +25,8 @@ Double_t calc_eta(Double_t theta) {
   return -1.0 * TMath::Log(TMath::Tan(theta / 2.0));
 }
 
-mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0, std::vector<TString> infiles = {"out.root"}) {
+mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0,
+                            std::vector<TString> infiles = {"out.root"}) {
   mCP_anal analysis;
 
   // calculate eta/phi acceptance
@@ -48,7 +49,7 @@ mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0, std::vector<TString> infiles =
   double sum_invtree_weight_err_sq = 0.0;
 
   // loop through input root files
-  for (std::size_t f=0; f<infiles.size(); f++) {
+  for (std::size_t f = 0; f < infiles.size(); f++) {
     // read in input file
     TFile *EventFile = new TFile(infiles[f], "READ");
     TTree *sourceTree = (TTree *)EventFile->Get("EventTree");
