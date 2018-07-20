@@ -107,10 +107,10 @@ void plotgraph(Double_t pTcut = 1.0) {
 
   TGraphErrors *gr =
       new TGraphErrors(n, x.data(), y.data(), ex.data(), ey.data());
-  gr->SetTitle(TString("Hadronic mCP Incident on milliQan (" + pTstrs.str() +
-                       " GeV mCP pT cut)"));
+  gr->SetTitle(
+      TString("Hadronic mCP Estimate (" + pTstrs.str() + " GeV mCP pT cut)"));
   gr->GetXaxis()->SetTitle("mCP mass (GeV)");
-  gr->GetYaxis()->SetTitle("mCP seen");
+  gr->GetYaxis()->SetTitle("mCP incident on milliQan");
   gr->Draw("ALP");
   c1->SaveAs("plot.pdf");
 }
