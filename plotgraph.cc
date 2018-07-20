@@ -96,7 +96,7 @@ void plotgraph(Double_t pTcut = 1.0) {
   for (std::size_t i = 0; i < analyses.size(); i++) {
     mCP_anal anal = analyses[i];
     x.push_back(anal.mass);
-    ex.push_back(0);
+    ex.push_back(0.0);
     y.push_back(anal.mCP_seen);
     ey.push_back(anal.mCP_seen_err);
   }
