@@ -27,13 +27,13 @@ void plotgraph(Double_t pTcut = 1.0) {
   num_files.push_back(2);
 
   masses.push_back("0.219");
-  num_files.push_back(0);
+  num_files.push_back(2);
 
   masses.push_back("0.329");
-  num_files.push_back(0);
+  num_files.push_back(2);
 
   masses.push_back("0.5");
-  num_files.push_back(0);
+  num_files.push_back(2);
 
   masses.push_back("1");
   num_files.push_back(0);
