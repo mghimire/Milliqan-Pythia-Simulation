@@ -25,8 +25,7 @@ Double_t calc_eta(Double_t theta) {
   return -1.0 * TMath::Log(TMath::Tan(theta / 2.0));
 }
 
-mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0,
-                            vector<TString> infiles = {"out.root"}) {
+mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0, std::vector<TString> infiles = {"out.root"}) {
   mCP_anal analysis;
 
   // calculate eta/phi acceptance
@@ -135,7 +134,7 @@ mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0,
   return analysis;
 }
 
-void ptcut(Double_t pTcut = 0.0, vector<TString> infiles = {"out.root"}) {
+void ptcut(Double_t pTcut = 0.0, std::vector<TString> infiles = {"out.root"}) {
   mCP_anal analysis = analyze_pythia_sim(pTcut, infiles);
   // output analysis calculated
   cout << "mCP mass is " << analysis.mass << " GeV" << endl;
