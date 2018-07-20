@@ -1,4 +1,5 @@
 #include <TFile.h>
+#include <TGraphErrors.h>
 #include <TMath.h>
 #include <TROOT.h>
 #include <TTree.h>
@@ -82,4 +83,34 @@ void plotgraph(Double_t pTcut = 1.0) {
          << acceptance_err.str() << endl;
   }
   cout << std::setfill('-') << std::setw(33) << "" << std::setfill(' ') << endl;
+
+  // plot graph of mCP incident on milliQan
+  TCanvas *c1 = new TCanvas(TString("mCP_canvas"));
+  c1->SetLogx();
+  c1->SetLogy();
+
+  std::vector<Double_t> x;
+  std::vector<Double_t> y;
+  std::vector<Double_t> ex;
+  std::vector<Double_t> ey;
+  for (std::size_t i = 0; i < analyses.size(); i++) {
+    mCP_anal anal = analyses[i];
+    x.push_back(anal.mass);
+    ex.push_back(0);
+    y.push_back(anal.mCP_seen);
+    ey.push_back(anal.mCP_seen_err);
+  }
+  Int_t n = x.size();
+
+  std::ostringstream pTstrs;
+  pTstrs << pTcut;
+
+  TGraphErrors *gr =
+      new TGraphErrors(n, x.data(), y.data(), ex.data(), ey.data());
+  gr->SetTitle(TString("Hadronic mCP Incident on milliQan (" + pTstrs.str() +
+                       " GeV mCP pT cut)"));
+  gr->GetXaxis()->SetTitle("mCP mass (GeV)");
+  gr->GetYaxis()->SetTitle("mCP seen");
+  gr->Draw("ALP");
+  c1->SaveAs("plot.pdf");
 }
