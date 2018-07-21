@@ -36,13 +36,13 @@ void plotgraph(Double_t pTcut = 1.0) {
   num_files.push_back(2);
 
   masses.push_back("1");
-  num_files.push_back(0);
+  num_files.push_back(2);
 
   masses.push_back("2");
-  num_files.push_back(0);
+  num_files.push_back(2);
 
   masses.push_back("10");
-  num_files.push_back(0);
+  num_files.push_back(2);
 
   std::vector<vector<TString>> files;
   // create lists of file names
@@ -63,6 +63,7 @@ void plotgraph(Double_t pTcut = 1.0) {
 
   // output mCP pT cut used
   cout << "mCP pT cut: " << pTcut << " GeV" << endl;
+  cout << "data: " << data << " fb^-1" << endl;
 
   // output table of analysis results
   cout << std::setfill('-') << std::setw(33) << "" << std::setfill(' ') << endl;
@@ -86,8 +87,6 @@ void plotgraph(Double_t pTcut = 1.0) {
 
   // plot graph of mCP incident on milliQan
   TCanvas *c1 = new TCanvas(TString("mCP_canvas"));
-  c1->SetLogx();
-  c1->SetLogy();
 
   std::vector<Double_t> x;
   std::vector<Double_t> y;
@@ -106,13 +105,20 @@ void plotgraph(Double_t pTcut = 1.0) {
 
   std::ostringstream pTstrs;
   pTstrs << pTcut;
+  std::ostringstream datastrs;
+  datastrs << data;
 
+  c1->SetLogx();
+  c1->SetLogy();
   TGraphErrors *gr =
       new TGraphErrors(n, x.data(), y.data(), ex.data(), ey.data());
   gr->SetTitle(
       TString("Hadronic mCP Estimate (" + pTstrs.str() + " GeV mCP pT cut)"));
   gr->GetXaxis()->SetTitle("mCP mass (GeV)");
-  gr->GetYaxis()->SetTitle("mCP incident on milliQan");
+  gr->GetYaxis()->SetTitle(TString("mCP incident on milliQan (" + datastrs.str() + " fb^{-1})"));
+  gr->GetXaxis()->CenterTitle();
+  gr->GetYaxis()->CenterTitle();
+  gr->GetXaxis()->SetTitleOffset(1.2);
   gr->Draw("ALP");
   c1->SaveAs("plot.pdf");
 }
