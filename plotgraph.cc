@@ -53,11 +53,20 @@ void plotgraph() {
   masses.push_back("0.01");
   num_files.push_back(2);
 
+  masses.push_back("0.02");
+  num_files.push_back(0);
+
+  masses.push_back("0.04");
+  num_files.push_back(0);
+
   masses.push_back("0.0540");
   num_files.push_back(2);
 
   masses.push_back("0.0810");
   num_files.push_back(2);
+
+  masses.push_back("0.150");
+  num_files.push_back(0);
 
   masses.push_back("0.219");
   num_files.push_back(4);
