@@ -208,7 +208,7 @@ void plotgraph() {
       myprecision = 3;
     qstrs << fixed << setprecision(myprecision) << q;
     legend->AddEntry(graphs[i],
-                     TString(pTstrs.str() + " GeV (q=" + qstrs.str() + ")"));
+                     TString(pTstrs.str() + " GeV (q=" + qstrs.str() + "e)"));
   }
   legend->SetHeader("pT cuts");
   legend->Draw();
