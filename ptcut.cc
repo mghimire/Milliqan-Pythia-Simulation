@@ -17,15 +17,14 @@ typedef struct {
 } mCP_anal;
 
 // calculation parameters
-Double_t charge = 1e-3;  // charge in e
-Double_t data = 300.0;   // 300 fb^-1
+Double_t data = 300.0;  // 300 fb^-1
 
 // calculate pseudorapidity from theta
 Double_t calc_eta(Double_t theta) {
   return -1.0 * TMath::Log(TMath::Tan(theta / 2.0));
 }
 
-mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0,
+mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0, Double_t charge = 1e-3,
                             std::vector<TString> infiles = {"out.root"}) {
   mCP_anal analysis;
 
@@ -136,7 +135,7 @@ mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0,
 }
 
 void ptcut(Double_t pTcut = 0.0, std::vector<TString> infiles = {"out.root"}) {
-  mCP_anal analysis = analyze_pythia_sim(pTcut, infiles);
+  mCP_anal analysis = analyze_pythia_sim(pTcut, 1e-3, infiles);
   // output analysis calculated
   cout << "mCP mass is " << analysis.mass << " GeV" << endl;
   cout << analysis.equiv_events << " equivalent events pass pT cut of " << pTcut

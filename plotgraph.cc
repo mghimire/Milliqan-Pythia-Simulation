@@ -54,10 +54,10 @@ void plotgraph() {
   num_files.push_back(2);
 
   masses.push_back("0.02");
-  num_files.push_back(0);
+  num_files.push_back(2);
 
   masses.push_back("0.04");
-  num_files.push_back(0);
+  num_files.push_back(2);
 
   masses.push_back("0.0540");
   num_files.push_back(2);
@@ -66,7 +66,7 @@ void plotgraph() {
   num_files.push_back(2);
 
   masses.push_back("0.150");
-  num_files.push_back(0);
+  num_files.push_back(2);
 
   masses.push_back("0.219");
   num_files.push_back(4);
@@ -106,7 +106,7 @@ void plotgraph() {
     Double_t pTcut = pTcuts[pT_i];
     std::vector<mCP_anal> analyses;
     for (std::size_t i = 0; i < files.size(); i++) {
-      mCP_anal analysis = analyze_pythia_sim(pTcut, files[i]);
+      mCP_anal analysis = analyze_pythia_sim(pTcut, calc_q(pTcut), files[i]);
       analyses.push_back(analysis);
     }
     pT_analyses.push_back(analyses);
