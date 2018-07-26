@@ -1,9 +1,8 @@
 #!/bin/bash
 source ~/.profile
 mkdir -p ./data
-declare -a masses=("0.02"
-                   "0.04"
-                   "0.150"
+declare -a masses=("0.150"
+                   "0.2"
                    )
 NUM_START=1
 NUM_END=2
