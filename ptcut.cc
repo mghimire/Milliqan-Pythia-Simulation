@@ -29,13 +29,13 @@ mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0, Double_t charge = 1e-3,
   mCP_anal analysis;
 
   // calculate eta/phi acceptance
-  Double_t det_loc = 43.1 * TMath::Pi() / 180.0;  // detector at 43.1 deg
-  Double_t det_width = 1.0;                       // detector is 1x1 m
-  Double_t det_dis = 33.0;                        // detector dist 33 m
-  Double_t angle_sub = det_width / det_dis;       // angle subtended by detector
+  Double_t det_loc = 6 * TMath::Pi() / 180.0;  // detector at 6 deg eta
+  Double_t det_width = 1.0;                    // detector is 1x1 m
+  Double_t det_dis = 33.0;                     // detector dist 33 m
+  Double_t angle_sub = det_width / det_dis;    // angle subtended by detector
   Double_t phi_acceptance = angle_sub / (2 * TMath::Pi());  // phi acceptance
   // calculate eta with width extra_width times larger for good stats
-  Double_t extra_width = 10.0;
+  Double_t extra_width = 1.0;
   Double_t low_eta = calc_eta(det_loc + 0.5 * angle_sub * extra_width);
   Double_t high_eta = calc_eta(det_loc - 0.5 * angle_sub * extra_width);
 
