@@ -13,8 +13,8 @@ declare -a masses=("0.01"
                    "2"
                    "10"
                    )
-NUM_START=1
-NUM_END=1
+NUM_START=5
+NUM_END=5
 EVENTS_PER_FILE=5000000
 for mass in "${masses[@]}"
 do
@@ -23,3 +23,5 @@ do
     ./py_sim -p 0 -m ${mass} -n ${EVENTS_PER_FILE} -f data/${mass}_${i}.root
   done
 done
+
+ls data/ > filenames.txt
