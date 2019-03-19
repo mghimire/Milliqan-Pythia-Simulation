@@ -27,41 +27,6 @@ using std::copy;
 
 // load ptcut.cc macro to do analysis as mCP_anal struct defined there
 
-//define global variables and resulting values outside
-//Double_t det_length = 3.0;
-//Double_t width_tolerance = 0.025;
-//Double_t Bfield = 3.8;
-//Double_t Bfield_R = 3.0;
-//Double_t Theta = TMath::ATan(width_tolerance/det_length);
-//Double_t pTtoQ_Conv_factor = 3.3 * TMath::Sin(22 * Theta) / (Bfield_R * Bfield);
-
-// calculate pT cut from charge based on approximate angle coming out from
-// detector
-Double_t calc_pTcut(Double_t q) {
-  Double_t det_length = 3.0;
-  Double_t width_tolerance = 0.025;
-  Double_t Bfield = 3.8;
-  Double_t Bfield_R = 3.0;
-  Double_t pTcut =
-      q * Bfield_R * Bfield *
-      TMath::Sqrt(TMath::Power(det_length / width_tolerance, 2) + 1) / (3.3 * 22);
-  return pTcut;
-}
-
-// calculate charge from pT cut based on approximate angle coming out from
-// detector
-//Double_t calc_q(Double_t pT) {
-//  Double_t c = 299792458.0;
-//  Double_t det_length = 3.0;
-//  Double_t width_tolerance = 0.025;
-//  Double_t Bfield = 3.8;
-//  Double_t Bfield_R = 3.0;
-//  Double_t q =
-//      pT / (c * 1e-9 * Bfield_R * Bfield *
-//            TMath::Sqrt(TMath::Power(det_length / width_tolerance, 2) + 1));
-//  return q;
-//}
-
 void plotgraph() {
   // load up the filenames of files in data/ to a vector of TStrings
   std::vector<TString> filenames;
@@ -92,10 +57,10 @@ void plotgraph() {
 
   // vector of charges we will plot
   std::vector<Double_t> charges; 
-  charges = {0.001, 0.005, 0.01, 0.05, 0.1, 0.3};
-//  for (int i = 0; i < 21; i++) {
-//    charges.push_back(0.001*std::exp(i*std::log(0.05/0.001) / 20));
-//  }
+//  charges = {0.001, 0.005, 0.01, 0.05, 0.1, 0.3};
+  for (int i = 0; i < 11; i++) {
+    charges.push_back(0.0001*TMath::Power(10, (4*i / 10.0)));
+  }
   // vector of analyses of those charges
   std::vector<std::vector<mCP_anal>> q_analyses;
 
@@ -105,7 +70,7 @@ void plotgraph() {
     Double_t q = charges[q_i];
     std::vector<mCP_anal> analyses;
     for (std::size_t i = 0; i < files.size(); i++) {
-      mCP_anal analysis = analyze_pythia_sim(calc_pTcut(q), q, files[i]);
+      mCP_anal analysis = analyze_pythia_sim(q, files[i]);
       analyses.push_back(analysis);
     }
     q_analyses.push_back(analyses);
@@ -150,20 +115,21 @@ void plotgraph() {
   // plot graph of charge vs mass with 
   TCanvas *c1 = new TCanvas("c","mCP_canvas",0,0,600,400);
   
-  c1->SetLogx(1);
-  c1->SetLogy(1);
+//  c1->SetLogx(1);
+//  c1->SetLogy(1);
   c1->SetLogz(1);
 
-  TH2D *g = new TH2D("mCPseen", "mCP seen vs Mass vs Charge; Mass (GeV); Charge (e); Number of Particles Seen", 500, 0, 2.5, 500, 0, 0.5);
+  TH2D *g = new TH2D("mCPseen", "mCP seen vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e); Number of Particles Seen", 12, -2, 1, 9, -4, 0.5);
 
   for (std::size_t m_i = 0; m_i < masses.size(); m_i++) {
     for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
       if (q_analyses[q_i][m_i].mCP_seen != 0) //option to keep or reject z = 0 points
-	g->Fill(masses[m_i], charges[q_i], q_analyses[q_i][m_i].mCP_seen);
+	g->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen);
     }
   }
   g->Draw("colz");
-  c1->SaveAs("heatplotnew.pdf");
+  c1->SaveAs("heatplotpTweight.C");
+  c1->SaveAs("heatplotpTweight.pdf");
 /*  std::vector<TGraph *> graphs;
     for (std::size_t q_i = 0; q_i < charges.size(); 1_i++) {
     std::vector<mCP_anal> analyses = q_analyses[q_i];

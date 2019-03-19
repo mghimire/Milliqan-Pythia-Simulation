@@ -3,8 +3,11 @@
 #include <TROOT.h>
 #include <TTree.h>
 #include <TVectorD.h>
+#include <TCanvas.h>
+#include <TRandom.h>
 #include <iostream>
 #include <vector>
+
 
 // struct of data that gets analyzed
 typedef struct {
@@ -24,9 +27,25 @@ Double_t calc_eta(Double_t theta) {
   return -1.0 * TMath::Log(TMath::Tan(theta / 2.0));
 }
 
-mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0, Double_t charge = 1e-3,
-                            std::vector<TString> infiles = {"out.root"}) {
+//define global variables and resulting values outside
+Double_t det_length = 3.0;
+Double_t width_tolerance = 0.05;
+Double_t Bfield = 3.8;
+Double_t Bfield_R = 3.0;
+Double_t Theta = TMath::ATan(width_tolerance/det_length);
+Double_t pTtoQ_Conv_factor = 3.3 * TMath::Sin(22 * Theta) / (Bfield_R * Bfield);
+
+// calculate pT cut from charge based on approximate angle coming out from
+// detector
+Double_t calc_pT(Double_t q) {
+  return q / pTtoQ_Conv_factor;
+}
+
+mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
+                            std::vector<TString> infiles = {"out.root"}, bool hist = 0) {
   mCP_anal analysis;
+
+  Double_t pTcut = calc_pT(charge);
 
   // calculate eta/phi acceptance
   Double_t det_loc = 84.0 * TMath::Pi() / 180.0;  // detector at th=84 deg 
@@ -47,6 +66,11 @@ mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0, Double_t charge = 1e-3,
   double sum_invtree_weight = 0.0;
   double sum_invtree_weight_err_sq = 0.0;
 
+  TH1D* mother_id_hist = new TH1D("mother_id_hist", "mother_id", 200, 0, 200000);
+  TH1D* pT_hist = new TH1D("pT_hist", "pT", 100, 0, 2);
+  TH1D* pTHat_hist = new TH1D("pTHat_hist", "pTHat", 100, 0, 20);
+  TH1D* eta_hist = new TH1D("eta_hist", "eta", 100, -15, 15);
+
   // loop through input root files
   for (std::size_t f = 0; f < infiles.size(); f++) {
     // read in input file
@@ -65,27 +89,60 @@ mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0, Double_t charge = 1e-3,
     sum_invtree_weight += 1.0 / tree_weight;
     sum_invtree_weight_err_sq +=
         TMath::Power(tree_w_err / (tree_weight * tree_weight), 2);
-
+    
     Double_t pT = 0.0;
     Double_t weight = 0.0;
     Double_t eta = 0.0;
+    Int_t mother_id = 0;
+    Double_t pTHat = 0.0;
+
     sourceTree->SetBranchAddress("pT", &pT);
     sourceTree->SetBranchAddress("eta", &eta);
     sourceTree->SetBranchAddress("weight", &weight);
+    //additional data for creating histogram
+    if (hist) {
+      sourceTree->SetBranchAddress("mother_id", &mother_id);
+      sourceTree->SetBranchAddress("pTHat", &pTHat);
+    }
     // count how many weighted mCP pass a pT cut (in GeV) and propagate errors
     for (unsigned int i = 0; i < nentries; i++) {
       sourceTree->GetEntry(i);
       Double_t abs_eta = TMath::Abs(eta);
-      if (pT > pTcut) {
+      TRandom r;
+      //check if it passes triangular PDF
+      if (r.Uniform() <= 1.0 - pTcut/pT) {
+	if (hist){
+	  eta_hist->Fill(eta,weight);
+	}
         // check if they pass eta cut for milliqan
         if (abs_eta > low_eta && abs_eta < high_eta) {
           event_sum += weight;
           event_sumsq += weight * weight;
+	  if (hist){
+	    mother_id_hist->Fill(mother_id,weight);
+	    pT_hist->Fill(pT,weight);
+	    pTHat_hist->Fill(pTHat,weight);
+	  }
         }
         sum_noetacut += weight;
         sum_noetacutsq += weight * weight;
       }
     }
+  }
+  if (hist){
+    TCanvas* c = new TCanvas("c", "mPC histograms",0,0,800,800);
+    c->SetLogy();
+    c->Divide(2,2);
+    c->cd(1);
+    mother_id_hist->Draw("bar0");
+    c->cd(2);
+    pT_hist->Draw("bar0");
+    c->cd(3);
+    pTHat_hist->Draw("bar0");
+    c->cd(4);
+    eta_hist->Draw("bar0");
+    c->cd();
+    c->SaveAs("hists.pdf");
   }
 
   Double_t event_sum_error = TMath::Sqrt(event_sumsq);
@@ -134,11 +191,11 @@ mCP_anal analyze_pythia_sim(Double_t pTcut = 0.0, Double_t charge = 1e-3,
   return analysis;
 }
 
-void ptcut(Double_t pTcut = 0.0, std::vector<TString> infiles = {"out.root"}) {
-  mCP_anal analysis = analyze_pythia_sim(pTcut, 1e-3, infiles);
+void ptcut(Double_t charge, std::vector<TString> infiles = {"out.root"}, bool hist = 0) {
+  mCP_anal analysis = analyze_pythia_sim(charge, infiles, hist);
   // output analysis calculated
   cout << "mCP mass is " << analysis.mass << " GeV" << endl;
-  cout << analysis.equiv_events << " equivalent events pass pT cut of " << pTcut
+  cout << analysis.equiv_events << " equivalent events pass pT cut of " << calc_pT(charge)
        << " GeV" << endl;
   cout << "acceptance is: " << analysis.acceptance << "+-"
        << analysis.acceptance_err << endl;
