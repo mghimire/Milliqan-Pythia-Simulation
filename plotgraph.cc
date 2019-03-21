@@ -17,13 +17,9 @@ using std::copy;
 #include <TTree.h>
 #include <TVectorD.h>
 #include <iomanip>
-#include <iostream>
 #include <sstream>
 #include <vector>
 #include "ptcut.cc"
-#include <fstream>
-#include <iterator>
-#include <algorithm>
 
 // load ptcut.cc macro to do analysis as mCP_anal struct defined there
 

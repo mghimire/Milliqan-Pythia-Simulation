@@ -5,6 +5,7 @@
 #include <TVectorD.h>
 #include <TCanvas.h>
 #include <TRandom.h>
+#include <TDirectory.h>
 #include <iostream>
 #include <vector>
 
@@ -54,9 +55,9 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
   Double_t angle_sub = det_width / det_dis;    // angle subtended by detector
   Double_t phi_acceptance = angle_sub / (2 * TMath::Pi());  // phi acceptance
   // calculate eta with width extra_width times larger for good stats
-  Double_t extra_width = 6.0;
-  Double_t low_eta = calc_eta(det_loc + 0.5 * angle_sub * extra_width);
-  Double_t high_eta = calc_eta(det_loc - 0.5 * angle_sub * extra_width);
+  Double_t low_eta = 0.0;
+  Double_t high_eta = 2.0;
+  Double_t actual_eta_width = calc_eta(det_loc + 0.5*angle_sub) - calc_eta(det_loc - 0.5*angle_sub);
 
   // initialize variables
   double event_sum = 0.0;
@@ -142,14 +143,17 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
     c->cd(4);
     eta_hist->Draw("bar0");
     c->cd();
-    c->SaveAs("hists.pdf");
+    TString dirname = TString("hists_eta")+Form("%f",low_eta)+TString("-")+Form("%f",high_eta);
+    gSystem->Exec("mkdir "+dirname);
+    TString out = dirname  + TString("/hist_") + Form("%f",analysis.mass) + TString("GeV_") + Form("%f",charge) + TString("e.pdf");
+    c->SaveAs(out);
   }
 
   Double_t event_sum_error = TMath::Sqrt(event_sumsq);
   Double_t sum_noetacut_error = TMath::Sqrt(sum_noetacutsq);
 
   // calculate detector acceptance and its uncertainty
-  Double_t acceptance_reweight = phi_acceptance / extra_width * 0.5;
+  Double_t acceptance_reweight = phi_acceptance * 0.5;
   Double_t acceptance_no_rw = event_sum / sum_noetacut;
   Double_t acceptance_no_rw_error =
       acceptance_no_rw *
@@ -177,7 +181,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
   final_reweight *= data;               // data in fb^-1
   final_reweight *= charge * charge;    // multiply by millicharge^2
   final_reweight *= phi_acceptance;     // phi acceptance
-  final_reweight *= 1.0 / extra_width;  // adjust for large eta width
+  //  final_reweight *= 1.0 / extra_width;  // adjust for the large eta width
   final_reweight *= 0.5;                // adjust for having both + and - eta
 
   // calc equiv num of events stat-wise if each event had weight 1
