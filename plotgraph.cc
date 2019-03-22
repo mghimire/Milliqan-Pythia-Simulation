@@ -26,7 +26,7 @@ using std::copy;
 void plotgraph() {
   // load up the filenames of files in data/ to a vector of TStrings
   std::vector<TString> filenames;
-  ifstream myfile("filenames.txt"); 
+  ifstream myfile("filenamesnew.txt"); 
 
   copy(istream_iterator<TString>(myfile),
        istream_iterator<TString>(),
@@ -45,7 +45,7 @@ void plotgraph() {
       std::vector<TString> massfiles;
       TString check = filenames[f_i](0,filenames[f_i].First("_"));
       do {
-          massfiles.push_back("data/" + filenames[f_i]);
+          massfiles.push_back("datanew/" + filenames[f_i]);
           f_i++;
       } while (filenames[f_i].BeginsWith(check));
       files.push_back(massfiles);
@@ -124,8 +124,8 @@ void plotgraph() {
     }
   }
   g->Draw("colz");
-  c1->SaveAs("heatplotpTweight.C");
-  c1->SaveAs("heatplotpTweight.pdf");
+  c1->SaveAs("heatplotpTweightnew.C");
+  c1->SaveAs("heatplotpTweightnew.pdf");
 /*  std::vector<TGraph *> graphs;
     for (std::size_t q_i = 0; q_i < charges.size(); 1_i++) {
     std::vector<mCP_anal> analyses = q_analyses[q_i];
