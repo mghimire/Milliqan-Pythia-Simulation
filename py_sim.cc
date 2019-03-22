@@ -47,7 +47,11 @@ int main(int argc, char **argv) {
   // mCP mass in GeV
   double mCPmass = 0.05;
   // jet pT (pTHat) cut in GeV
-  double pTcut = 0.0;
+  double pTcut = 2 * mCPmass;
+  // bool to check if pTHat cut is provided manually
+  bool pTInput = false;
+  // variable for manual pTHat cut
+  double manualpTcut;
   // name of output root file with events
   TString output_file = "out.root";
   // output found particle info
@@ -67,14 +71,21 @@ int main(int argc, char **argv) {
         break;
       case 'm':  // mCP mass in GeV
         mCPmass = std::stod(optarg);
+	pTcut = 2 * mCPmass;
         break;
       case 'p':  // jet pT (pTHat) cut in GeV
-        pTcut = std::stod(optarg);
+        manualpTcut = std::stod(optarg);
+	pTInput = true;
         break;
       case '?':
         cout << "Error: Invalid option" << endl;
         return EXIT_FAILURE;
-    }
+  }
+  
+  // Check to update pTcut
+  if (pTInput){
+    pTcut = manualpTcut;
+  }
 
   // Generator
   Pythia pythia;

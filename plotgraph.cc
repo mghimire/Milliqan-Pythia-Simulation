@@ -1,3 +1,11 @@
+#include <iostream>
+using std::cin;
+#include <fstream>
+using std::ifstream;
+#include <iterator>
+using std::istream_iterator;
+#include <algorithm>
+using std::copy;
 #include <TAxis.h>
 #include <TCanvas.h>
 #include <TFile.h>
@@ -9,107 +17,59 @@
 #include <TTree.h>
 #include <TVectorD.h>
 #include <iomanip>
-#include <iostream>
 #include <sstream>
 #include <vector>
 #include "ptcut.cc"
 
 // load ptcut.cc macro to do analysis as mCP_anal struct defined there
 
-// calculate pT cut from charge based on approximate angle coming out from
-// detector
-Double_t calc_pTcut(Double_t q) {
-  Double_t c = 299792458.0;
-  Double_t det_length = 3.0;
-  Double_t width_tolerance = 0.025;
-  Double_t Bfield = 3.8;
-  Double_t Bfield_R = 3.0;
-  Double_t pTcut =
-      q * c * 1e-9 * Bfield_R * Bfield / 2.0 *
-      TMath::Sqrt(TMath::Power(det_length / width_tolerance, 2) + 1);
-  return pTcut;
-}
-
-// calculate charge from pT cut based on approximate angle coming out from
-// detector
-Double_t calc_q(Double_t pT) {
-  Double_t c = 299792458.0;
-  Double_t det_length = 3.0;
-  Double_t width_tolerance = 0.025;
-  Double_t Bfield = 3.8;
-  Double_t Bfield_R = 3.0;
-  Double_t q =
-      pT / (c * 1e-9 * Bfield_R * Bfield / 2.0 *
-            TMath::Sqrt(TMath::Power(det_length / width_tolerance, 2) + 1));
-  return q;
-}
-
 void plotgraph() {
-  // load up vectors of the masses we have files for and the number of files of
-  // each mass
-  std::vector<TString> masses;
-  std::vector<int> num_files;
+  // load up the filenames of files in data/ to a vector of TStrings
+  std::vector<TString> filenames;
+  ifstream myfile("filenames.txt"); 
 
-  masses.push_back("0.01");
-  num_files.push_back(2);
+  copy(istream_iterator<TString>(myfile),
+       istream_iterator<TString>(),
+       back_inserter(filenames));
 
-  masses.push_back("0.02");
-  num_files.push_back(2);
-
-  masses.push_back("0.04");
-  num_files.push_back(2);
-
-  masses.push_back("0.0540");
-  num_files.push_back(2);
-
-  masses.push_back("0.0810");
-  num_files.push_back(2);
-
-  masses.push_back("0.150");
-  num_files.push_back(2);
-
-  masses.push_back("0.219");
-  num_files.push_back(4);
-
-  masses.push_back("0.329");
-  num_files.push_back(4);
-
-  masses.push_back("0.5");
-  num_files.push_back(4);
-
-  masses.push_back("1");
-  num_files.push_back(8);
-
-  masses.push_back("2");
-  num_files.push_back(8);
-
-  masses.push_back("10");
-  num_files.push_back(2);
-
-  std::vector<vector<TString>> files;
-  // create lists of file names
-  for (std::size_t i = 0; i < masses.size(); i++) {
-    std::vector<TString> mass_files;
-    for (int j = 1; j <= num_files[i]; j++)
-      mass_files.push_back("data/" + masses[i] + "_" + j + ".root");
-    if (mass_files.size() > 0) files.push_back(mass_files);
+  //create a vector of masses being used for future reference
+  std::vector<Double_t> masses;
+  for (std::size_t i = 0; i < filenames.size(); i++) {
+    if (filenames[i].EndsWith("_1.root")) masses.push_back(filenames[i].Atof());
   }
 
-  // vector of pT cuts we will plot
-  std::vector<Double_t> pTcuts = {0.1, 0.2, 0.5, 1.0, 2.0};
-  // vector of analyses of those pT cuts
-  std::vector<std::vector<mCP_anal>> pT_analyses;
+  //create a vector of vectors per mass of filenames
+  std::vector<vector<TString>> files;
+  int f_i = 0;
+  do {
+      std::vector<TString> massfiles;
+      TString check = filenames[f_i](0,filenames[f_i].First("_"));
+      do {
+          massfiles.push_back("data/" + filenames[f_i]);
+          f_i++;
+      } while (filenames[f_i].BeginsWith(check));
+      files.push_back(massfiles);
+  } while (f_i < filenames.size());
 
-  // do analysis with each pT cut and add to master list
-  for (std::size_t pT_i = 0; pT_i < pTcuts.size(); pT_i++) {
-    // run analysis on each mass size with given pT cut
-    Double_t pTcut = pTcuts[pT_i];
+  // vector of charges we will plot
+  std::vector<Double_t> charges; 
+//  charges = {0.001, 0.005, 0.01, 0.05, 0.1, 0.3};
+  for (int i = 0; i < 11; i++) {
+    charges.push_back(0.0001*TMath::Power(10, (4*i / 10.0)));
+  }
+  // vector of analyses of those charges
+  std::vector<std::vector<mCP_anal>> q_analyses;
+
+  // do analysis with each charge and add to master list
+  for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
+    // run analysis on each mass size with given charge
+    Double_t q = charges[q_i];
     std::vector<mCP_anal> analyses;
     for (std::size_t i = 0; i < files.size(); i++) {
-      mCP_anal analysis = analyze_pythia_sim(pTcut, calc_q(pTcut), files[i]);
+      mCP_anal analysis = analyze_pythia_sim(q, files[i]);
       analyses.push_back(analysis);
     }
-    pT_analyses.push_back(analyses);
+    q_analyses.push_back(analyses);
   }
 
   // output amount of fb^-1 calculation is based on
@@ -118,11 +78,11 @@ void plotgraph() {
 
   // output table of analysis result points and acceptance for each pT cut and
   // mass
-  for (std::size_t pT_i = 0; pT_i < pTcuts.size(); pT_i++) {
-    std::vector<mCP_anal> analyses = pT_analyses[pT_i];
-    Double_t pTcut = pTcuts[pT_i];
-    // output mCP pT cut used
-    cout << "Next table mCP pT cut: " << pTcut << " GeV" << endl;
+  for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
+    std::vector<mCP_anal> analyses = q_analyses[q_i];
+    Double_t charge = charges[q_i];
+    // output mCP charge used
+    cout << "Next table mCP charge: " << charge << "e" << endl;
     cout << std::setfill('=') << std::setw(33) << "" << std::setfill(' ')
          << endl;
     cout << std::setw(7) << "m (GeV)"
@@ -148,15 +108,28 @@ void plotgraph() {
     cout << endl;
   }
 
-  // plot graph of mCP incident on milliQan for each pT cut
-  TCanvas *c1 = new TCanvas(TString("mCP_canvas"));
-  TMultiGraph *mg = new TMultiGraph();
+  // plot graph of charge vs mass with 
+  TCanvas *c1 = new TCanvas("c","mCP_canvas",0,0,600,400);
+  
+//  c1->SetLogx(1);
+//  c1->SetLogy(1);
+  c1->SetLogz(1);
 
-  // add each graph to a vector for use with legend later
-  std::vector<TGraph *> graphs;
-  for (std::size_t pT_i = 0; pT_i < pTcuts.size(); pT_i++) {
-    std::vector<mCP_anal> analyses = pT_analyses[pT_i];
-    Double_t pTcut = pTcuts[pT_i];
+  TH2D *g = new TH2D("mCPseen", "mCP seen vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e); Number of Particles Seen", 12, -2, 1, 9, -4, 0.5);
+
+  for (std::size_t m_i = 0; m_i < masses.size(); m_i++) {
+    for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
+      if (q_analyses[q_i][m_i].mCP_seen != 0) //option to keep or reject z = 0 points
+	g->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen);
+    }
+  }
+  g->Draw("colz");
+  c1->SaveAs("heatplotpTweight.C");
+  c1->SaveAs("heatplotpTweight.pdf");
+/*  std::vector<TGraph *> graphs;
+    for (std::size_t q_i = 0; q_i < charges.size(); 1_i++) {
+    std::vector<mCP_anal> analyses = q_analyses[q_i];
+    Double_t charge = charges[q_i];
     std::vector<Double_t> x;
     std::vector<Double_t> y;
     std::vector<Double_t> ex;
@@ -222,4 +195,6 @@ void plotgraph() {
   legend->SetHeader("pT cuts");
   legend->Draw();
   c1->SaveAs("plot.pdf");
+*/
+
 }
