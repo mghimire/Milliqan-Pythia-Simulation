@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
   // mCP mass in GeV
   double mCPmass = 0.05;
   // jet pT (pTHat) cut in GeV
-  double pTcut = 2 * mCPmass;
+  double pTcut = 4;
   // bool to check if pTHat cut is provided manually
   bool pTInput = false;
   // variable for manual pTHat cut
@@ -71,7 +71,7 @@ int main(int argc, char **argv) {
         break;
       case 'm':  // mCP mass in GeV
         mCPmass = std::stod(optarg);
-	pTcut = 2 * mCPmass;
+	if (mCPmass > 2.0) pTcut = 2 * mCPmass;
         break;
       case 'p':  // jet pT (pTHat) cut in GeV
         manualpTcut = std::stod(optarg);
@@ -115,8 +115,8 @@ int main(int argc, char **argv) {
 
   // reweight events by power in pT to get more favorable spectrum
   // setting to off will put event weights back to 1
-  pythia.readString("PhaseSpace:bias2Selection = on");
-  pythia.readString("PhaseSpace:bias2SelectionPow = 1.1");
+  /*pythia.readString("PhaseSpace:bias2Selection = on");
+  pythia.readString("PhaseSpace:bias2SelectionPow = 1.1");*/
 
   // eanble this to see output of all particle data
   // pythia.particleData.listAll();
@@ -426,6 +426,10 @@ int main(int argc, char **argv) {
   // calculate tree weight and error
   Double_t tree_weight = sigma / weightsum;
   Double_t tree_weight_error = sigmaerr / weightsum;
+
+  cout << "sigma is " << sigma << endl;
+  cout << "weightsum is " << weightsum << endl;
+  cout << "tree weight is " << tree_weight << endl;
 
   // store weight error and mass in TTree
   TVectorD sig_err(2);

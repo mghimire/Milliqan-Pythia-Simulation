@@ -47,7 +47,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
   mCP_anal analysis;
 
   Double_t pTcut = calc_pT(charge);
-
+  
   // calculate eta/phi acceptance
   Double_t det_loc = 84.0 * TMath::Pi() / 180.0;  // detector at th=84 deg 
   Double_t det_width = 1.0;                    // detector is 1x1 m
@@ -57,7 +57,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
   // calculate eta with width extra_width times larger for good stats
   Double_t low_eta = 0.0;
   Double_t high_eta = 2.0;
-  Double_t actual_eta_width = calc_eta(det_loc + 0.5*angle_sub) - calc_eta(det_loc - 0.5*angle_sub);
+  Double_t actual_eta_width = calc_eta(det_loc - 0.5*angle_sub) - calc_eta(det_loc + 0.5*angle_sub);
 
   // initialize variables
   double event_sum = 0.0;
@@ -88,6 +88,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
     analysis.mass = tree_err_vec[0][1];
 
     sum_invtree_weight += 1.0 / tree_weight;
+    cout << "tree weight is " << tree_weight << endl;
     sum_invtree_weight_err_sq +=
         TMath::Power(tree_w_err / (tree_weight * tree_weight), 2);
     
@@ -168,6 +169,8 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
       sum_invtree_weight_error / (sum_invtree_weight * sum_invtree_weight);
 
   Double_t event_sum_reweight = event_sum * reweight_from_tree;
+  cout << "event sum is " << event_sum << endl;
+  cout << "reweight from tree is " << reweight_from_tree << endl;
   Double_t event_sum_reweight_error =
       event_sum_reweight *
       TMath::Sqrt(
@@ -176,13 +179,13 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
 
   // calculate final reweighting for events to calculate mCP seen
   double final_reweight = 1.0;
-  final_reweight *= 1e-3;               // mb to b
-  final_reweight *= 1e15;               // b to fb
-  final_reweight *= data;               // data in fb^-1
-  final_reweight *= charge * charge;    // multiply by millicharge^2
-  final_reweight *= phi_acceptance;     // phi acceptance
-  //  final_reweight *= 1.0 / extra_width;  // adjust for the large eta width
-  final_reweight *= 0.5;                // adjust for having both + and - eta
+  final_reweight *= 1e-3;               			// mb to b
+  final_reweight *= 1e15;               			// b to fb
+  final_reweight *= data;               			// data in fb^-1
+  final_reweight *= charge * charge;    			// multiply by millicharge^2
+  final_reweight *= phi_acceptance;     			// phi acceptance
+  final_reweight *= actual_eta_width / (high_eta - low_eta);  	// adjust for the large eta width
+  final_reweight *= 0.5;                			// adjust for having both + and - eta
 
   // calc equiv num of events stat-wise if each event had weight 1
   analysis.equiv_events = event_sum * event_sum / event_sumsq;

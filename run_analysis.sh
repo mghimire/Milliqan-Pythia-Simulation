@@ -1,5 +1,6 @@
 #!/bin/bash
-mkdir -p ./datanew
+mkdir -p ./datapT4
+mkdir -p ./pythialogfiles
 declare -a masses=( "0.01"
                     "0.02"
                     "0.04"
@@ -24,8 +25,8 @@ for mass in "${masses[@]}"
 do
   for ((i=NUM_START;i<=NUM_END;i++)); do
     #screen -S ${mass//.}_${i} -d -m sh -c "source ~/.profile;./py_sim -p 0 -m ${mass} -n ${EVENTS_PER_FILE} -f data/${mass}_${i}.root"
-    ./py_sim -m ${mass} -n ${EVENTS_PER_FILE} -f datanew/${mass}_${i}.root
+    ./py_sim -m ${mass} -n ${EVENTS_PER_FILE} -f datapT4/${mass}_${i}.root > pythialogfiles/${mass}_${i}.txt
   done
 done
 
-ls data/ > filenames.txt
+ls data/ > filenamespT4.txt
