@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
   // mCP mass in GeV
   double mCPmass = 0.05;
   // jet pT (pTHat) cut in GeV
-  double pTcut = 4;
+  double pTcut = 4.0;
   // bool to check if pTHat cut is provided manually
   bool pTInput = false;
   // variable for manual pTHat cut
@@ -100,8 +100,16 @@ int main(int argc, char **argv) {
   pythia.readString("Random:setSeed = on");
   pythia.readString("Random:seed = " + strsRanSeed.str());
 
-  // Turn on all hard QCD processes
-  pythia.readString("HardQCD:all = on");
+  // Turn on hard QCD processes based on mass
+  if (mCPmass < 0.5) {
+    pythia.readString("HardQCD:all = on");
+  }
+  else {
+    if (mCPmass < 1.5) {
+      pythia.readString("HardQCD:hardccbar = on");
+      pythia.readString("HardQCD:hardbbbar = on");
+    } else pythia.readString("HardQCD:hardbbbar = on");
+  }
 
   // Initialization, pp beam @ 13 TeV
   pythia.readString("Beams:idA = 2212");
@@ -118,7 +126,7 @@ int main(int argc, char **argv) {
   /*pythia.readString("PhaseSpace:bias2Selection = on");
   pythia.readString("PhaseSpace:bias2SelectionPow = 1.1");*/
 
-  // eanble this to see output of all particle data
+  // enable this to see output of all particle data
   // pythia.particleData.listAll();
 
   // Vector of hadrons and channels to adjust the branching ratios with a line.
@@ -171,7 +179,7 @@ int main(int argc, char **argv) {
   qchs.push_back({223, 4, 5, 111});
   qchs.push_back({223, 6, 7});
 
-  //  331  eta'                                1   0   0    0.95778
+  // 331  eta'                                1   0   0    0.95778
   //          6     1   0.0001076    0       13      -13       22
   lchs.push_back({331, 13, 6});
 
@@ -264,9 +272,10 @@ int main(int argc, char **argv) {
     double sbRatio = poly_approx(line_pts, mCPmass);
     // set to 0 if branching ratio negative
     if (sbRatio < 0) {
-      cout << "Calculated branching ratio approximation is < 0." << endl;
-      cout << "  Hadron ID is " << had_id << endl;
+      cout << "Calculated branching ratio approximation for Hadron ID " << had_id << " is < 0" << endl;
       sbRatio = 0;
+    } else {
+      cout << "Calculated branching ratio approximation for Hadron ID " << had_id << " is: " << sbRatio << endl;
     }
     // set new branching ratio in pythia
     std::ostringstream strsbRatio;
@@ -304,9 +313,10 @@ int main(int argc, char **argv) {
     double sbRatio = poly_approx(quad_pts, mCPmass);
     // exit with error if branching ratio negative
     if (sbRatio < 0) {
-      cout << "Calculated branching ratio approximation is < 0." << endl;
-      cout << "  Hadron ID is " << had_id << endl;
+      cout << "Calculated branching ratio approximation for Hadron ID " << had_id << " is < 0" << endl;
       sbRatio = 0;
+    } else {
+      cout << "Calculated branching ratio approximation for Hadron ID " << had_id << " is: " << sbRatio << endl;
     }
     // set new branching ratio in pythia
     std::ostringstream strsbRatio;
