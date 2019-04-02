@@ -107,11 +107,11 @@ int main(int argc, char **argv) {
   
   if (myprocess==0){
     // Turn on hard QCD processes based on mass
-	if (mCPmass < 0.5) {
+	if (mCPmass < 0.6) {
 		pythia.readString("HardQCD:all = on");
     }
 	else {
-		if (mCPmass < 1.5) pythia.readString("HardQCD:hardccbar = on");
+		if (mCPmass < 1.7) pythia.readString("HardQCD:hardccbar = on");
 		pythia.readString("HardQCD:hardbbbar = on");
 	}
   }
