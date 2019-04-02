@@ -56,10 +56,12 @@ int main(int argc, char **argv) {
   TString output_file = "out.root";
   // output found particle info
   bool verbose = false;
+  //type of events to make
+  int myprocess=0;
 
   // process commandline arguments
   int c;
-  while ((c = getopt(argc, argv, "vf:n:m:p:")) != -1) switch (c) {
+  while ((c = getopt(argc, argv, "vf:n:m:p:t:")) != -1) switch (c) {
       case 'v':  // verbose, output mCP info
         verbose = true;
         break;
@@ -75,7 +77,10 @@ int main(int argc, char **argv) {
         break;
       case 'p':  // jet pT (pTHat) cut in GeV
         manualpTcut = std::stod(optarg);
-	pTInput = true;
+		pTInput = true;
+        break;
+      case 't':  // type of process to make
+        myprocess = std::stod(optarg);
         break;
       case '?':
         cout << "Error: Invalid option" << endl;
@@ -99,17 +104,38 @@ int main(int argc, char **argv) {
   strsRanSeed << ran_seed;
   pythia.readString("Random:setSeed = on");
   pythia.readString("Random:seed = " + strsRanSeed.str());
-
-  // Turn on hard QCD processes based on mass
-  if (mCPmass < 0.5) {
-    pythia.readString("HardQCD:all = on");
+  
+  if (myprocess==0){
+    // Turn on hard QCD processes based on mass
+	if (mCPmass < 0.5) {
+		pythia.readString("HardQCD:all = on");
+    }
+	else {
+		if (mCPmass < 1.5) pythia.readString("HardQCD:hardccbar = on");
+		pythia.readString("HardQCD:hardbbbar = on");
+	}
+  }
+  else if (myprocess==1){ 
+       pythia.readString("Onia:all = on"); // Turn on all *onia processes
+  }
+  else if (myprocess==2){
+       pythia.readString("WeakSingleBoson:ffbar2gmZ= on"); // Turn on gamma* and Z
+       // Apply mass cut
+       double mcut = 4.0;
+       if (mCPmass*2. -1 > mcut){
+               mcut = mCPmass*2. -1;
+               std::ostringstream strsm;
+               strsm << mcut;
+               pythia.readString("PhaseSpace:mHatMin = " + strsm.str());
+       }
   }
   else {
-    if (mCPmass < 1.5) {
-      pythia.readString("HardQCD:hardccbar = on");
-      pythia.readString("HardQCD:hardbbbar = on");
-    } else pythia.readString("HardQCD:hardbbbar = on");
+         cout << "invalid process: " << myprocess<<endl;
+         return -7;
   }
+  
+  //Turn off hadronization
+  //pythia.readString("HadronLevel:Hadronize = off");
 
   // Initialization, pp beam @ 13 TeV
   pythia.readString("Beams:idA = 2212");
@@ -125,9 +151,6 @@ int main(int argc, char **argv) {
   // setting to off will put event weights back to 1
   /*pythia.readString("PhaseSpace:bias2Selection = on");
   pythia.readString("PhaseSpace:bias2SelectionPow = 1.1");*/
-
-  // enable this to see output of all particle data
-  // pythia.particleData.listAll();
 
   // Vector of hadrons and channels to adjust the branching ratios with a line.
   // Each item contains: {hadron_id, decay channel particle id, decay_channel,
@@ -244,7 +267,8 @@ int main(int argc, char **argv) {
   // 200553  Upsilon(3S)                      3   0   0   10.35
   //          0     1   0.0000000    0       11      -11
   //          1     1   0.0379639    0       13      -13
-  qchs.push_back({200553, 0, 1});
+  //ACH messed up due to no e BR?! 
+  //qchs.push_back({200553, 0, 1});
 
   // initialize points for linear branching ratio approximation
   vector<vector<double>> line_pts{
@@ -272,10 +296,10 @@ int main(int argc, char **argv) {
     double sbRatio = poly_approx(line_pts, mCPmass);
     // set to 0 if branching ratio negative
     if (sbRatio < 0) {
-      cout << "Calculated branching ratio approximation for Hadron ID " << had_id << " is < 0" << endl;
+      cout << "Calculated linear branching ratio approximation for Hadron ID " << had_id << " is < 0" << endl;
       sbRatio = 0;
     } else {
-      cout << "Calculated branching ratio approximation for Hadron ID " << had_id << " is: " << sbRatio << endl;
+      cout << "Calculated linear branching ratio approximation for Hadron ID " << had_id << " is: " << sbRatio << endl;
     }
     // set new branching ratio in pythia
     std::ostringstream strsbRatio;
@@ -313,10 +337,16 @@ int main(int argc, char **argv) {
     double sbRatio = poly_approx(quad_pts, mCPmass);
     // exit with error if branching ratio negative
     if (sbRatio < 0) {
-      cout << "Calculated branching ratio approximation for Hadron ID " << had_id << " is < 0" << endl;
+      cout << "Calculated quad branching ratio approximation for Hadron ID " << had_id << " is < 0" << endl;
       sbRatio = 0;
-    } else {
-      cout << "Calculated branching ratio approximation for Hadron ID " << had_id << " is: " << sbRatio << endl;
+    } 
+    else if (sbRatio > .5 ) {
+      cout << "Calculated quad branching ratio approximation is > .5 for Hadron ID " << had_id << endl;
+      cout << "    setting back to "<<quad_pts[2][1]<<endl;
+      sbRatio = quad_pts[2][1];
+    }
+    else {
+      cout << "Calculated quad branching ratio approximation for Hadron ID " << had_id << " is: " << sbRatio << endl;
     }
     // set new branching ratio in pythia
     std::ostringstream strsbRatio;
@@ -333,6 +363,11 @@ int main(int argc, char **argv) {
 
   // initialize pythia
   pythia.init();
+  
+  // enable this to see output of all particle data
+  pythia.particleData.listAll();
+  
+  cout<< "Z BR to +-13 now "<< pythia.particleData.particleDataEntryPtr(23)->channel(7).bRatio()<<endl;
 
   // (re)make output file, event tree
   TFile f(output_file, "recreate");
@@ -417,6 +452,7 @@ int main(int argc, char **argv) {
         cout << pythia.event[m].name() << ":" << endl;
         cout << "pT = " << pythia.event[m].pT() << endl;
         cout << "mother: " << pythia.event[pythia.event[m].mother1()].name()
+			 <<" at mass: "<< pythia.event[pythia.event[m].mother1()].m()
              << endl;
       }
     }
