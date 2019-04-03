@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
         cout << "Error: Invalid option" << endl;
         return EXIT_FAILURE;
   }
-  
+    
   // Check to update pTcut
   if (pTInput){
     pTcut = manualpTcut;
@@ -299,7 +299,7 @@ int main(int argc, char **argv) {
       cout << "Calculated linear branching ratio approximation for Hadron ID " << had_id << " is < 0" << endl;
       sbRatio = 0;
     } else {
-      cout << "Calculated linear branching ratio approximation for Hadron ID " << had_id << " is: " << sbRatio << endl;
+      cout << "Calculated linear branching ratio approximation for Hadron ID " << had_id << " is: " <<scientific<<std::setprecision(3)<< sbRatio << endl;
     }
     // set new branching ratio in pythia
     std::ostringstream strsbRatio;
@@ -339,14 +339,17 @@ int main(int argc, char **argv) {
     if (sbRatio < 0) {
       cout << "Calculated quad branching ratio approximation for Hadron ID " << had_id << " is < 0" << endl;
       sbRatio = 0;
-    } 
+    }
+    else if (mCPmass > quad_pts[0][0]) {
+	  cout << "Calculated quad branching ratio approximation for Hadron ID " << had_id << " is 0 because mCP too heavy" << endl;
+      sbRatio = 0;
+	}
     else if (sbRatio > .5 ) {
-      cout << "Calculated quad branching ratio approximation is > .5 for Hadron ID " << had_id << endl;
-      cout << "    setting back to "<<quad_pts[2][1]<<endl;
+      cout << "Calculated quad branching ratio approximation is > .5 for Hadron ID " << had_id << " so setting back to "<<quad_pts[2][1]<<endl;
       sbRatio = quad_pts[2][1];
     }
     else {
-      cout << "Calculated quad branching ratio approximation for Hadron ID " << had_id << " is: " << sbRatio << endl;
+      cout << "Calculated quad branching ratio approximation for Hadron ID " << had_id << " is: " <<scientific<<std::setprecision(3)<< sbRatio << endl;
     }
     // set new branching ratio in pythia
     std::ostringstream strsbRatio;
