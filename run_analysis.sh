@@ -1,32 +1,26 @@
 #!/bin/bash
-mkdir -p ./datapT4
+mkdir -p ./data
 mkdir -p ./pythialogfiles
-declare -a masses=( "0.01"
-                    "0.02"
-                    "0.04"
-                    "0.054"
-                    "0.081"
-                    "0.15"
-                    "0.219"
-                    "0.329"
-                    "0.5"
-                    "0.75"
-                    "1"
-                    "2"
-                    "4"
-                    "5"
-                    "10"
-                   )
 
 NUM_START=1
-NUM_END=1
-EVENTS_PER_FILE=5000000
-for mass in "${masses[@]}"
+NUM_END=1 #5
+EVENTS_PER_FILE=100 #5000000
+
+for type in "0" "1" "2"; do
+for mass in "0.01" "0.02" "0.04" "0.054" "0.081" "0.15" "0.219" "0.329" "0.5" "0.75" "1" "1.4" "1.6" "2" "4" "5" "6" "10" "20" "30" "40" "42" "44" "46" "48" "50" "60" "80" "100" "150" "200" "300"
 do
   for ((i=NUM_START;i<=NUM_END;i++)); do
-    #screen -S ${mass//.}_${i} -d -m sh -c "source ~/.profile;./py_sim -p 0 -m ${mass} -n ${EVENTS_PER_FILE} -f data/${mass}_${i}.root"
-    ./py_sim -m ${mass} -n ${EVENTS_PER_FILE} -f datapT4/${mass}_${i}.root > pythialogfiles/${mass}_${i}.txt
+    if [ ${type} -le 1 ]; then 
+      if [ ${mass%.*} -ge 10 ]; then continue; fi
+    fi
+    typename="qcd"
+    if [ ${type} -eq 1 ]; then typename="onia"; fi
+    if [ ${type} -eq 2 ]; then typename="gammaZ"; fi
+    echo $type $typename $mass $i
+    ./py_sim -t ${type} -m ${mass} -n ${EVENTS_PER_FILE} -f data/${typename}_${mass}_${i}.root > pythialogfiles/${typename}_${mass}_${i}.txt &
+    while [ `pgrep -c py_sim` -ge 8 ]; do sleep 10; done # wait for jobs to finish before starting new ones
   done
 done
+done
 
-ls data/ > filenamespT4.txt
+ls data/ > filenames.txt
