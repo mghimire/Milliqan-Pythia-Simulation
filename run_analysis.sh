@@ -2,6 +2,11 @@
 mkdir -p ./data
 mkdir -p ./pythialogfiles
 
+killall py_sim
+sleep 1
+
+make
+
 NUM_START=1
 NUM_END=1 #5
 EVENTS_PER_FILE=100 #5000000
@@ -23,4 +28,7 @@ do
 done
 done
 
+echo "waiting for last jobs to finish"
+while [ `pgrep -c py_sim` -ge 1 ]; do sleep 10; done # wait for jobs to finish
 ls data/ > filenames.txt
+echo "done!"
