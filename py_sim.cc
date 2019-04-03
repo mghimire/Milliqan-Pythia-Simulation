@@ -105,28 +105,27 @@ int main(int argc, char **argv) {
   pythia.readString("Random:setSeed = on");
   pythia.readString("Random:seed = " + strsRanSeed.str());
   
-  if (myprocess==0){
-    // Turn on hard QCD processes based on mass
-	if (mCPmass < 0.6) {
-		pythia.readString("HardQCD:all = on");
-    }
-	else {
-		if (mCPmass < 1.7) pythia.readString("HardQCD:hardccbar = on");
-		pythia.readString("HardQCD:hardbbbar = on");
-	}
+  if (myprocess==0){    
+	pythia.readString("HardQCD:all = on"); // Turn on hard QCD processes
+	
+	// Apply jet pT cut
+	std::ostringstream strspT;
+	strspT << pTcut;
+	pythia.readString("PhaseSpace:pTHatMin = " + strspT.str());
   }
   else if (myprocess==1){ 
        pythia.readString("Onia:all = on"); // Turn on all *onia processes
   }
   else if (myprocess==2){
        pythia.readString("WeakSingleBoson:ffbar2gmZ= on"); // Turn on gamma* and Z
+       
        // Apply mass cut
        double mcut = 4.0;
        if (mCPmass*2. -1 > mcut){
-               mcut = mCPmass*2. -1;
-               std::ostringstream strsm;
-               strsm << mcut;
-               pythia.readString("PhaseSpace:mHatMin = " + strsm.str());
+          mcut = mCPmass*2. -1;
+          std::ostringstream strsm;
+          strsm << mcut;
+          pythia.readString("PhaseSpace:mHatMin = " + strsm.str());
        }
   }
   else {
@@ -141,11 +140,6 @@ int main(int argc, char **argv) {
   pythia.readString("Beams:idA = 2212");
   pythia.readString("Beams:idB = 2212");
   pythia.readString("Beams:eCM = 13000");
-
-  // Apply pT cut
-  std::ostringstream strspT;
-  strspT << pTcut;
-  pythia.readString("PhaseSpace:pTHatMin = " + strspT.str());
 
   // reweight events by power in pT to get more favorable spectrum
   // setting to off will put event weights back to 1
