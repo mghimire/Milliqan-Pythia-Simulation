@@ -55,9 +55,9 @@ void plotgraph(TString extra) {
 
   // vector of charges we will plot
   std::vector<Double_t> charges; 
-//  charges = {0.001, 0.005, 0.01, 0.05, 0.1, 0.3};
-  for (int i = 0; i < 11; i++) {
-    charges.push_back(0.0001*TMath::Power(10, (4*i / 10.0)));
+  int nch=40; // number of charges to try
+  for (int i = 0; i < nch+1; i++) {
+    charges.push_back(0.0001*TMath::Power(10, (4*i / (double)nch)));
   }
   // vector of analyses of those charges
   std::vector<std::vector<mCP_anal>> q_analyses;
@@ -66,6 +66,7 @@ void plotgraph(TString extra) {
   for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
     // run analysis on each mass size with given charge
     Double_t q = charges[q_i];
+    cout<<"charge "<<q<<endl;
     std::vector<mCP_anal> analyses;
     for (std::size_t i = 0; i < files.size(); i++) {
       mCP_anal analysis = analyze_pythia_sim(q, files[i]);
@@ -80,6 +81,7 @@ void plotgraph(TString extra) {
 
   // output table of analysis result points and acceptance for each pT cut and
   // mass
+  /*
   for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
     std::vector<mCP_anal> analyses = q_analyses[q_i];
     Double_t charge = charges[q_i];
@@ -109,9 +111,10 @@ void plotgraph(TString extra) {
          << endl;
     cout << endl;
   }
+  */
 
   // plot graph of charge vs mass with 
-  TCanvas *c1 = new TCanvas("c","mCP_canvas",0,0,600,400);
+  TCanvas *c1 = new TCanvas("c1","mCP_canvas",0,0,600,400);
 
 	gStyle->SetOptStat(0);
   
@@ -120,8 +123,9 @@ void plotgraph(TString extra) {
   c1->SetLogz(1);
 
   TH2D *g;
-  if (extra=="gammaZ") g = new TH2D("mCPseen", "mCP seen vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e); Number of Particles Seen", 20, -2, 3, 9, -4, 0.5);
-  else g = new TH2D("mCPseen", "mCP seen vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e); Number of Particles Seen", 12, -2, 1, 9, -4, 0.5);
+  //if (extra=="gammaZ") 
+  g = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 20, -2, 3, nch, -4, 0.5);
+  //else g = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 12, -2, 1, 9, -4, 0.5);
 
   for (std::size_t m_i = 0; m_i < masses.size(); m_i++) {
     for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
