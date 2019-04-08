@@ -56,8 +56,8 @@ void plotgraph(TString extra) {
   // vector of charges we will plot
   std::vector<Double_t> charges; 
   int nch=40; // number of charges to try
-  for (int i = 0; i < nch+1; i++) {
-    charges.push_back(0.0001*TMath::Power(10, (4*i / (double)nch)));
+  for (int i = 0; i <= nch+1; i++) {
+    charges.push_back(0.0001*TMath::Power(10, (4*i / (double)(nch+1))));
   }
   // vector of analyses of those charges
   std::vector<std::vector<mCP_anal>> q_analyses;
@@ -124,7 +124,7 @@ void plotgraph(TString extra) {
 
   TH2D *g;
   //if (extra=="gammaZ") 
-  g = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 20, -2, 3, nch, -4, 0.5);
+  g = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 20, -2, 3, nch, -4, 0); // can go to 40 masses, and just 2.3 high
   //else g = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 12, -2, 1, 9, -4, 0.5);
 
   for (std::size_t m_i = 0; m_i < masses.size(); m_i++) {
