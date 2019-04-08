@@ -116,16 +116,11 @@ void plotgraph(TString extra) {
   // plot graph of charge vs mass with 
   TCanvas *c1 = new TCanvas("c1","mCP_canvas",0,0,600,400);
 
-	gStyle->SetOptStat(0);
-  
-//  c1->SetLogx(1);
-//  c1->SetLogy(1);
+  gStyle->SetOptStat(0);
   c1->SetLogz(1);
 
   TH2D *g;
-  //if (extra=="gammaZ") 
   g = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 20, -2, 3, nch, -4, 0); // can go to 40 masses, and just 2.3 high
-  //else g = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 12, -2, 1, 9, -4, 0.5);
 
   for (std::size_t m_i = 0; m_i < masses.size(); m_i++) {
     for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
