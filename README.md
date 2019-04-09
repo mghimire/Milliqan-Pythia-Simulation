@@ -24,11 +24,13 @@ The following commandline flags are available at runtime.
 
 For example, to manually configure with the default options run the program after compilation with `./py_sim -n 100 -m 0.05 -p 4 -t 0 -f out.root`.
 
-There is a bash script, [`run_analysis.sh`](../master/run_analysis.sh), that loops over a range of masses from 0.01 to 200 GeV on a logarithmic (base 10) scale. It also sets the number of events based on the mass it is running in order to maintain a maximum of 10% error.
+There is a bash script, [`run_analysis.sh`](../master/run_analysis.sh), that loops `py_sim` over a range of masses from 0.01 to 200 GeV on a logarithmic (base 10) scale. It also sets the number of events based on the mass it is running in order to maintain a maximum of 10% error. It saves the simulation TTree files into `./data*` directories and Pythia log files into a `./pythialogfiles` directory.
 
 Analysis of Data
 ----------------
 A ROOT macro, [`ptcut.cc`](../master/ptcut.cc), is included to help calculate the number of mCP that pass a pT cut as determined by the charge (due to magnetic bending and rock damping effects) and would be seen by milliQan. To use the macro, run `root -b -q -l 'ptcut.cc(0.001,{"out.root"})'` with the first argument being the desired mCP charge in units of e and the second argument being a comma separated list of the `py_sim` root output files you want to run on. The macro will combine all the listed files for calculation. The calculation for mCP seen is done assuming 300 fb^-1 of data. This can be easily changed by modifying the macro. There is also an option accepted as a third argument (boolean that defaults to 0) that creates a set of histograms of the mother ID, pT, pTHat, and eta of the mCPs that pass the pT cut.
+
+There is also a bash script, [`show_hadron_BRs.sh`](../master/show_hadron_BRs.sh), which reads the Pythia log files and outputs the Branching Ratios of the Z and different hadrons into the mCP based on its mass.
 
 Generating Plots
 ----------------
