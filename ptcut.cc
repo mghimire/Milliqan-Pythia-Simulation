@@ -30,7 +30,7 @@ Double_t calc_eta(Double_t theta) {
 
 //define global variables and resulting values outside
 Double_t det_length = 3.0;
-Double_t width_tolerance = 0.05;
+Double_t width_tolerance = 0.05;// *2;//allow for wider paths?
 Double_t Bfield = 3.8;
 Double_t Bfield_R = 3.0;
 Double_t Theta = TMath::ATan(width_tolerance/det_length);
@@ -47,6 +47,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
   mCP_anal analysis;
 
   Double_t pTcut = calc_pT(charge);
+  //cout<<"ptcut is "<<pTcut<<endl;
   
   // calculate eta/phi acceptance
   Double_t det_loc = 84.0 * TMath::Pi() / 180.0;  // detector at th=84 deg 
