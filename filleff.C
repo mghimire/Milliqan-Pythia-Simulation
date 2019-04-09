@@ -34,9 +34,18 @@ void filleff(int nlay=1){
     heff->SetStats(0);
     heff->Draw("colz");
 
-    if (nlay==1) heff->SaveAs("eff1.C");//unity efficiency
-    else if (nlay==3) heff->SaveAs("eff3.C");//3 layer eff
-    else if (nlay==4) heff->SaveAs("eff4.C");//4 layer eff
+    if (nlay==1) {
+		heff->SaveAs("eff1.C");//unity efficiency
+		heff->SaveAs("eff1.pdf");
+	}
+    else if (nlay==3) {
+		heff->SaveAs("eff3.C");//3 layer eff
+		heff->SaveAs("eff3.pdf");
+	}
+    else if (nlay==4) {
+		heff->SaveAs("eff4.C");//4 layer eff
+		heff->SaveAs("eff4.pdf");
+	}
     else cout<<"dont know layer "<<nlay<<endl;
 	
 }
