@@ -1,7 +1,7 @@
 void heatplotpTweight_gammaZ1()
 {
 //=========Macro generated from canvas: c1/mCP_canvas
-//=========  (Tue Apr  9 11:45:54 2019) by ROOT version 6.14/08
+//=========  (Tue Apr  9 12:40:38 2019) by ROOT version 6.14/08
    TCanvas *c1 = new TCanvas("c1", "mCP_canvas",3,60,600,400);
    gStyle->SetOptStat(0);
    c1->Range(0,0,1,1);
@@ -3457,6 +3457,7 @@ void heatplotpTweight_gammaZ1()
    mCPseengammaZ1->SetBinError(1846,3.092);
    mCPseengammaZ1->SetBinError(1848,1.398449);
    mCPseengammaZ1->SetEntries(1722);
+   mCPseengammaZ1->SetDirectory(0);
    mCPseengammaZ1->SetStats(0);
 
    Int_t ci;      // for color index setting

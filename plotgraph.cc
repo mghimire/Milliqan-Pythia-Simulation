@@ -119,20 +119,24 @@ void plotgraph(TString extra) {
 
   TH2D *g = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 41, -2, 2.3, nch+2, -4, 0.01); // can go to 40 masses, and just 2.3 high
   TH2D *gtest = new TH2D(*g); gtest->SetName("gtest"); // a copy of the hist, to check that each bin is only filled once
+  TH2D *gerror = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 41, -2, 2.3, nch+2, -4, 0.01); // can go to 40 masses, and just 2.3 high
 
   for (std::size_t m_i = 0; m_i < masses.size(); m_i++) {
     for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
 	  if (gtest->GetBinContent(gtest->FindBin(std::log10(masses[m_i]), std::log10(charges[q_i])))!=0){
 		  cout<<"Bin already filled at "<<masses[m_i]<<" "<<charges[q_i]<<endl;
 	  }
-      if (q_analyses[q_i][m_i].mCP_seen != 0) //option to keep or reject z = 0 points
+      if (q_analyses[q_i][m_i].mCP_seen != 0) {//option to keep or reject z = 0 points
 		g->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen);
+		gerror->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen);
+	  }
 	  gtest->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]));
     }
   }
   g->Draw("colz");
-
   c1->SaveAs("heatplotpTweight_"+extra+".C");
   c1->SaveAs("heatplotpTweight_"+extra+".pdf");
-
+  gerror->Draw("colz");
+  c1->SaveAs("heatplotpTweighterr_"+extra+".C");
+  c1->SaveAs("heatplotpTweighterr_"+extra+".pdf");
 }
