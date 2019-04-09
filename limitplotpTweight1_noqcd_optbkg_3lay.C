@@ -1,8 +1,8 @@
 void limitplotpTweight1_noqcd_optbkg_3lay()
 {
 //=========Macro generated from canvas: c1/mCP_canvas
-//=========  (Tue Apr  9 11:53:00 2019) by ROOT version 6.14/08
-   TCanvas *c1 = new TCanvas("c1", "mCP_canvas",3,60,600,400);
+//=========  (Tue Apr  9 12:11:16 2019) by ROOT version 6.14/08
+   TCanvas *c1 = new TCanvas("c1", "mCP_canvas",0,0,600,400);
    gStyle->SetOptStat(0);
    c1->Range(0,0,1,1);
    c1->SetFillColor(0);

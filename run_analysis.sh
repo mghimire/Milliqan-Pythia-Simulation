@@ -41,3 +41,7 @@ ls dataqcd${1}/ > filenamesqcd${1}.txt
 ls datagammaZ${1}/ > filenamesgammaZ${1}.txt
 ls dataonia${1}/ > filenamesonia${1}.txt
 echo "done!"
+
+#make all the plots
+./plotgraphs.sh $1
+

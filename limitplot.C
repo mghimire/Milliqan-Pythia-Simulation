@@ -7,20 +7,27 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra=""){
 	TH2D* mCPseenqcd = (TH2D*)gROOT->Get("mCPseenqcd"+extra);
 	TH2D* heff = (TH2D*)gROOT->Get("heff__1");
 	
+	TCanvas *c2 = new TCanvas("c1","mCP_canvas",0,0,600,400);	
 	mCPseengammaZ->Draw();
 	mCPseenonia->Draw();
 	if (doqcd) mCPseenqcd->Draw();
 	mCPseengammaZ->Add(mCPseenonia);
-	if (doqcd) mCPseengammaZ->Add(mCPseenqcd);
-	
-	mCPseengammaZ->Multiply(heff);//account for detector efficiency, loaded in eff.C
-	
-	mCPseengammaZ->SetTitle("milliQan Sensitivity vs. Mass and Charge");
+	if (doqcd) mCPseengammaZ->Add(mCPseenqcd);	
+	mCPseengammaZ->Multiply(heff);//account for detector efficiency, loaded in eff.C	
+	mCPseengammaZ->SetTitle("mCP Detected vs. Mass and Charge");
 	mCPseengammaZ->Draw("colz");
-	//mCP_canvas->SetLogz(1);
+	c2->SetLogz(1);
 	
-	mCPseengammaZ->SetContour(3);
+	TString quali="";
+	if (doqcd) quali="_qcd"; else quali="_noqcd";
+	if (bkg==0) quali+="_optbkg"; else quali+="_origbkg";
 	
+	c2->SaveAs("effheatplotpTweight"+extra+quali+"_"+heff->GetTitle()+".C");
+    c2->SaveAs("effheatplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
+    
+    // Now make contour plot version
+	
+	mCPseengammaZ->SetContour(3);	
 	if (bkg==0){ // optimistic 
 		mCPseengammaZ->SetContourLevel(0,0.6);//6 in 3000/fb, for 2 bkg
 		//mCPseengammaZ->SetContourLevel(0,1.8);//18 in 3000/fb, for 10 bkg
@@ -34,18 +41,12 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra=""){
 	}
 	else cout<<"dont know bkg "<<bkg<<endl;
 
-	TCanvas *c1 = new TCanvas("c1","mCP_canvas",0,0,600,400);
-	
-	//mCPseengammaZ->Draw("colz");
+	TCanvas *c3 = new TCanvas("c1","mCP_canvas",0,0,600,400);	
+	mCPseengammaZ->SetTitle("milliQan Sensitivity vs. Mass and Charge");
 	mCPseengammaZ->Draw("cont1");
-	mCPseengammaZ->SetLineWidth(2);
-	
+	mCPseengammaZ->SetLineWidth(2);	
 	gROOT->ProcessLine(".x oldlimits.C");
 	
-	TString quali="";
-	if (doqcd) quali="_qcd"; else quali="_noqcd";
-	if (bkg==0) quali+="_optbkg"; else quali+="_origbkg";
-	
-	c1->SaveAs("limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".C");
-    c1->SaveAs("limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
+	c3->SaveAs("limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".C");
+    c3->SaveAs("limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
 }
