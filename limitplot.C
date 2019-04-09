@@ -5,7 +5,7 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra=""){
 	TH2D* mCPseengammaZ = (TH2D*)gROOT->Get("mCPseengammaZ"+extra);
 	TH2D* mCPseenonia = (TH2D*)gROOT->Get("mCPseenonia"+extra);
 	TH2D* mCPseenqcd = (TH2D*)gROOT->Get("mCPseenqcd"+extra);
-	TH2D* heff = (TH2D*)gROOT->Get("heff__1");
+	TH2D* heff = (TH2D*)gROOT->Get("heff");
 	
 	TCanvas *c2 = new TCanvas("c1","mCP_canvas",0,0,600,400);	
 	mCPseengammaZ->Draw();
