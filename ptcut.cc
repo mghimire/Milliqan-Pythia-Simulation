@@ -67,10 +67,16 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
   double sum_invtree_weight = 0.0;
   double sum_invtree_weight_err_sq = 0.0;
 
-  TH1D* mother_id_hist = new TH1D("mother_id_hist", "mother_id", 200, 0, 200000);
-  TH1D* pT_hist = new TH1D("pT_hist", "pT", 100, 0, 2);
-  TH1D* pTHat_hist = new TH1D("pTHat_hist", "pTHat", 100, 0, 20);
-  TH1D* eta_hist = new TH1D("eta_hist", "eta", 100, -15, 15);
+  TH1D* mother_id_hist;
+  TH1D* pT_hist;
+  TH1D* pTHat_hist;
+  TH1D* eta_hist;
+  if (hist){
+	mother_id_hist = new TH1D("mother_id_hist", "mother_id", 200, 0, 200000);
+	pT_hist = new TH1D("pT_hist", "pT", 100, 0, 2);
+	pTHat_hist = new TH1D("pTHat_hist", "pTHat", 100, 0, 20);
+	eta_hist = new TH1D("eta_hist", "eta", 100, -15, 15);
+  }
 
   // loop through input root files
   for (std::size_t f = 0; f < infiles.size(); f++) {
@@ -88,7 +94,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
     analysis.mass = tree_err_vec[0][1];
 
     sum_invtree_weight += 1.0 / tree_weight;
-    cout << "tree weight is " << tree_weight << endl;
+    //cout << "tree weight is " << tree_weight << endl;
     sum_invtree_weight_err_sq +=
         TMath::Power(tree_w_err / (tree_weight * tree_weight), 2);
     
@@ -113,23 +119,28 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
       TRandom r;
       //check if it passes triangular PDF
       if (r.Uniform() <= 1.0 - pTcut/pT) {
-	if (hist){
-	  eta_hist->Fill(eta,weight);
-	}
+		if (pT < 16. * charge * charge) {// check that we have enough pT to get through the rock
+			//cout<<"stuck in rock for charge "<<charge<<endl;
+			continue;
+		}
+		if (hist){
+			eta_hist->Fill(eta,weight);
+		}
         // check if they pass eta cut for milliqan
         if (abs_eta > low_eta && abs_eta < high_eta) {
           event_sum += weight;
           event_sumsq += weight * weight;
-	  if (hist){
-	    mother_id_hist->Fill(mother_id,weight);
-	    pT_hist->Fill(pT,weight);
-	    pTHat_hist->Fill(pTHat,weight);
-	  }
+			if (hist){
+				mother_id_hist->Fill(mother_id,weight);
+				pT_hist->Fill(pT,weight);
+				pTHat_hist->Fill(pTHat,weight);
+			}
         }
         sum_noetacut += weight;
         sum_noetacutsq += weight * weight;
       }
     }
+    EventFile->Close();
   }
   if (hist){
     TCanvas* c = new TCanvas("c", "mPC histograms",0,0,800,800);
@@ -169,8 +180,8 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
       sum_invtree_weight_error / (sum_invtree_weight * sum_invtree_weight);
 
   Double_t event_sum_reweight = event_sum * reweight_from_tree;
-  cout << "event sum is " << event_sum << endl;
-  cout << "reweight from tree is " << reweight_from_tree << endl;
+  //cout << "event sum is " << event_sum << endl;
+  //cout << "reweight from tree is " << reweight_from_tree << endl;
   Double_t event_sum_reweight_error =
       event_sum_reweight *
       TMath::Sqrt(

@@ -21,12 +21,14 @@ using std::copy;
 #include <vector>
 #include "ptcut.cc"
 
+// call like: root -l 'plotgraph.cc("gammaZ")'
+
 // load ptcut.cc macro to do analysis as mCP_anal struct defined there
 
-void plotgraph() {
+void plotgraph(TString extra) {
   // load up the filenames of files in data/ to a vector of TStrings
   std::vector<TString> filenames;
-  ifstream myfile("filenamesnew.txt"); 
+  ifstream myfile("filenames"+extra+".txt"); 
 
   copy(istream_iterator<TString>(myfile),
        istream_iterator<TString>(),
@@ -45,7 +47,7 @@ void plotgraph() {
       std::vector<TString> massfiles;
       TString check = filenames[f_i](0,filenames[f_i].First("_"));
       do {
-          massfiles.push_back("datanew/" + filenames[f_i]);
+          massfiles.push_back("data"+extra+"/" + filenames[f_i]);
           f_i++;
       } while (filenames[f_i].BeginsWith(check));
       files.push_back(massfiles);
@@ -53,9 +55,9 @@ void plotgraph() {
 
   // vector of charges we will plot
   std::vector<Double_t> charges; 
-//  charges = {0.001, 0.005, 0.01, 0.05, 0.1, 0.3};
-  for (int i = 0; i < 11; i++) {
-    charges.push_back(0.0001*TMath::Power(10, (4*i / 10.0)));
+  int nch=40; // number of charges to try
+  for (int i = 0; i <= nch+1; i++) {
+    charges.push_back(0.0001*TMath::Power(10, (4*i / (double)(nch+1))));
   }
   // vector of analyses of those charges
   std::vector<std::vector<mCP_anal>> q_analyses;
@@ -64,6 +66,7 @@ void plotgraph() {
   for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
     // run analysis on each mass size with given charge
     Double_t q = charges[q_i];
+    cout<<"charge "<<q<<endl;
     std::vector<mCP_anal> analyses;
     for (std::size_t i = 0; i < files.size(); i++) {
       mCP_anal analysis = analyze_pythia_sim(q, files[i]);
@@ -74,10 +77,9 @@ void plotgraph() {
 
   // output amount of fb^-1 calculation is based on
   cout << "data: " << data << " fb^-1" << endl;
-  cout << endl;
 
-  // output table of analysis result points and acceptance for each pT cut and
-  // mass
+  // output table of analysis result points and acceptance for each pT cut and mass
+  /*
   for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
     std::vector<mCP_anal> analyses = q_analyses[q_i];
     Double_t charge = charges[q_i];
@@ -107,94 +109,34 @@ void plotgraph() {
          << endl;
     cout << endl;
   }
+  */
 
   // plot graph of charge vs mass with 
-  TCanvas *c1 = new TCanvas("c","mCP_canvas",0,0,600,400);
-  
-//  c1->SetLogx(1);
-//  c1->SetLogy(1);
+  TCanvas *c1 = new TCanvas("c1","mCP_canvas",0,0,600,400);
+
+  gStyle->SetOptStat(0);
   c1->SetLogz(1);
 
-  TH2D *g = new TH2D("mCPseen", "mCP seen vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e); Number of Particles Seen", 12, -2, 1, 9, -4, 0.5);
+  TH2D *g = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 41, -2, 2.3, nch+2, -4, 0.01); // can go to 40 masses, and just 2.3 high
+  TH2D *gtest = new TH2D(*g); gtest->SetName("gtest"); // a copy of the hist, to check that each bin is only filled once
+  TH2D *gerror = new TH2D("mCPseen"+extra, "Uncertainty on mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 41, -2, 2.3, nch+2, -4, 0.01); // can go to 40 masses, and just 2.3 high
 
   for (std::size_t m_i = 0; m_i < masses.size(); m_i++) {
     for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
-      if (q_analyses[q_i][m_i].mCP_seen != 0) //option to keep or reject z = 0 points
-	g->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen);
+	  if (gtest->GetBinContent(gtest->FindBin(std::log10(masses[m_i]), std::log10(charges[q_i])))!=0){
+		  cout<<"Bin already filled at "<<masses[m_i]<<" "<<charges[q_i]<<endl;
+	  }
+      if (q_analyses[q_i][m_i].mCP_seen != 0) {//option to keep or reject z = 0 points
+		g->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen);
+		gerror->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen);
+	  }
+	  gtest->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]));
     }
   }
   g->Draw("colz");
-  c1->SaveAs("heatplotpTweightnew.C");
-  c1->SaveAs("heatplotpTweightnew.pdf");
-/*  std::vector<TGraph *> graphs;
-    for (std::size_t q_i = 0; q_i < charges.size(); 1_i++) {
-    std::vector<mCP_anal> analyses = q_analyses[q_i];
-    Double_t charge = charges[q_i];
-    std::vector<Double_t> x;
-    std::vector<Double_t> y;
-    std::vector<Double_t> ex;
-    std::vector<Double_t> ey;
-    for (std::size_t i = 0; i < analyses.size(); i++) {
-      mCP_anal anal = analyses[i];
-      // only add if more than 0 seen since log plot
-      if (anal.mCP_seen > 0.0) {
-        x.push_back(anal.mass);
-        ex.push_back(0.0);
-        y.push_back(anal.mCP_seen);
-        ey.push_back(anal.mCP_seen_err);
-      }
-    }
-    Int_t n = x.size();
-    TGraphErrors *gr =
-        new TGraphErrors(n, x.data(), y.data(), ex.data(), ey.data());
-    // set colors so they aren't blinding
-    gr->SetLineColor(pT_i + 2);
-    if (gr->GetLineColor() == 3) gr->SetLineColor(kGreen + 1);
-    if (gr->GetLineColor() == 5) gr->SetLineColor(kOrange + 7);
-    // set variant line styles
-    gr->SetLineStyle(pT_i + 1);
-    // plot lines between points
-    mg->Add(gr, "LP");
-    graphs.push_back(gr);
-  }
-  c1->SetLogx();
-  c1->SetLogy();
-  mg->SetTitle("Hadronic mCP Estimate");
-  mg->GetXaxis()->SetTitle("mCP mass (GeV)");
-  std::ostringstream datastrs;
-  datastrs << data;
-  mg->GetYaxis()->SetTitle(
-      TString("mCP incident on milliQan (" + datastrs.str() + " fb^{-1})"));
-  mg->GetXaxis()->CenterTitle();
-  mg->GetYaxis()->CenterTitle();
-  mg->GetXaxis()->SetTitleOffset(1.2);
-  // draw with axes
-  mg->Draw("A");
-  // add legend to show the pT cuts
-  TLegend *legend = new TLegend(0.65, 0.68, .85, .85);
-  legend->SetTextSize(0.025);
-  for (std::size_t i = 0; i < graphs.size(); i++) {
-    Double_t pTcut = pTcuts[i];
-    std::ostringstream pTstrs;
-    pTstrs << pTcut;
-    // calculate approximate charge from pT cut
-    Double_t q = calc_q(pTcut);
-    std::ostringstream qstrs;
-    // only show most significant figure
-    int myprecision;
-    if (i == 0)
-      myprecision = 4;
-    else if (i == 4)
-      myprecision = 2;
-    else
-      myprecision = 3;
-    qstrs << fixed << setprecision(myprecision) << q;
-    legend->AddEntry(graphs[i],
-                     TString(pTstrs.str() + " GeV (q=" + qstrs.str() + "e)"));
-  }
-  legend->SetHeader("pT cuts");
-  legend->Draw();
-  c1->SaveAs("plot.pdf");
-*/
-
+  c1->SaveAs("heatplotpTweight_"+extra+".C");
+  c1->SaveAs("heatplotpTweight_"+extra+".pdf");
+  gerror->Draw("colz");
+  c1->SaveAs("heatplotpTweighterr_"+extra+".C");
+  c1->SaveAs("heatplotpTweighterr_"+extra+".pdf");
 }
