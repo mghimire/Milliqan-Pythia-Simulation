@@ -139,7 +139,8 @@ int main(int argc, char **argv) {
   // Initialization, pp beam @ 13 TeV
   pythia.readString("Beams:idA = 2212");
   pythia.readString("Beams:idB = 2212");
-  pythia.readString("Beams:eCM = 13000");
+  //pythia.readString("Beams:eCM = 13000");//13 TeV
+  pythia.readString("Beams:eCM = 14000");//14 TeV
 
   // reweight events by power in pT to get more favorable spectrum
   // setting to off will put event weights back to 1

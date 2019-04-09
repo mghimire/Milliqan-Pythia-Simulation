@@ -8,6 +8,7 @@ mkdir -p ./pythialogfiles$1
 killall py_sim
 sleep 1
 
+source environ.sh
 make
 
 NUM_START=1
