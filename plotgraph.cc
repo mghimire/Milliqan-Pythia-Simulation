@@ -134,9 +134,10 @@ void plotgraph(TString extra) {
     }
   }
   g->Draw("colz");
-  c1->SaveAs("heatplotpTweight_"+extra+".C");
-  c1->SaveAs("heatplotpTweight_"+extra+".pdf");
+  gSystem->Exec("mkdir plots");
+  c1->SaveAs("plots/heatplotpTweight_"+extra+".C");
+  c1->SaveAs("plots/heatplotpTweight_"+extra+".pdf");
   gerror->Draw("colz");
-  c1->SaveAs("heatplotpTweighterr_"+extra+".C");
-  c1->SaveAs("heatplotpTweighterr_"+extra+".pdf");
+  c1->SaveAs("plots/heatplotpTweighterr_"+extra+".C");
+  c1->SaveAs("plots/heatplotpTweighterr_"+extra+".pdf");
 }
