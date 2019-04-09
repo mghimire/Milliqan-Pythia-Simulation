@@ -1,7 +1,10 @@
 
 root -l -q plotgraph.cc\(\"gammaZ$1\"\)
+sleep 1
 root -l -q plotgraph.cc\(\"onia$1\"\)
+sleep 1
 root -l -q plotgraph.cc\(\"qcd$1\"\)
+sleep 1
 
 root -l -q filleff.C\(1\)
 root -l -q filleff.C\(3\)

@@ -1,7 +1,7 @@
 void heatplotpTweighterr_qcd1()
 {
 //=========Macro generated from canvas: c1/mCP_canvas
-//=========  (Tue Apr  9 12:41:59 2019) by ROOT version 6.14/08
+//=========  (Tue Apr  9 13:13:11 2019) by ROOT version 6.14/08
    TCanvas *c1 = new TCanvas("c1", "mCP_canvas",3,60,600,400);
    gStyle->SetOptStat(0);
    c1->Range(-2.5375,-4.50125,2.8375,0.51125);
@@ -11,7 +11,7 @@ void heatplotpTweighterr_qcd1()
    c1->SetLogz();
    c1->SetFrameBorderMode(0);
    
-   TH2D *mCPseenqcd1 = new TH2D("mCPseenqcd1","mCP seen from qcd1 vs Mass vs Charge",41,-2,2.3,42,-4,0.01);
+   TH2D *mCPseenqcd1 = new TH2D("mCPseenqcd1","Uncertainty on mCP seen from qcd1 vs Mass vs Charge",41,-2,2.3,42,-4,0.01);
    mCPseenqcd1->SetBinContent(44,0.005107597);
    mCPseenqcd1->SetBinContent(45,0.005186357);
    mCPseenqcd1->SetBinContent(46,0.005365687);
