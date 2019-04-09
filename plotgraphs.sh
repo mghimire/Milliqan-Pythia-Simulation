@@ -1,14 +1,16 @@
 
-root -l -q plotgraph.cc\(\"gammaZ$1\"\)
-sleep 3
-root -l -q plotgraph.cc\(\"onia$1\"\)
-sleep 3
-root -l -q plotgraph.cc\(\"qcd$1\"\)
-sleep 3
+#root -l -q plotgraph.cc\(\"gammaZ$1\"\)
+#root -l -q plotgraph.cc\(\"onia$1\"\)
+#root -l -q plotgraph.cc\(\"qcd$1\"\)
 
-root -l -q filleff.C
-sleep 3
+#root -l -q filleff.C\(1\)
+#root -l -q filleff.C\(3\)
+#root -l -q filleff.C\(4\)
 
-#root heatplotpTweight_qcd$1.C heatplotpTweight_onia$1.C heatplotpTweight_gammaZ$1.C limitplot.C\(0,\"$1\"\) #don't add qcd
-root heatplotpTweight_qcd$1.C heatplotpTweight_onia$1.C heatplotpTweight_gammaZ$1.C eff.C limitplot.C\(1,\"$1\"\) #all
+doqcd=0 # 0 or 1
+bkg=1 # 0 (optimistic) or 1 (orig)
+
+root -l -q heatplotpTweight_qcd$1.C heatplotpTweight_onia$1.C heatplotpTweight_gammaZ$1.C eff1.C limitplot.C\($doqcd,$bkg,\"$1\"\)
+root -l -q heatplotpTweight_qcd$1.C heatplotpTweight_onia$1.C heatplotpTweight_gammaZ$1.C eff3.C limitplot.C\($doqcd,$bkg,\"$1\"\)
+root -l -q heatplotpTweight_qcd$1.C heatplotpTweight_onia$1.C heatplotpTweight_gammaZ$1.C eff4.C limitplot.C\($doqcd,$bkg,\"$1\"\)
 

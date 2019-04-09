@@ -2,7 +2,6 @@
 *.d
 *.so
 *.pcm
-*.pdf
 *.txt
 py_sim
 .DS_Store

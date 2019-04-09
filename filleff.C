@@ -1,31 +1,42 @@
-void filleff(){
+void filleff(int nlay=1){
 
-	TH2D* h3 = new TH2D("h3","eff", 20, -2, 3, 40, -4, 0);
+	TH2D* heff = new TH2D("heff","heff", 41, -2, 2.3, 42, -4, 0.01);
 	
-	Int_t nbinsx = h3->GetNbinsX();
-    Int_t nbinsy = h3->GetNbinsY();
-	int nlay=4; // number of layers
+	if (nlay==1) heff->SetTitle("unity");
+	if (nlay==3) heff->SetTitle("3lay");
+	if (nlay==4) heff->SetTitle("4lay");
+	
+	Int_t nbinsx = heff->GetNbinsX();
+    Int_t nbinsy = heff->GetNbinsY();
     
     for (int biny=1;biny<=nbinsy;biny++) {
        for (int binx=1;binx<=nbinsx;binx++) {
           
-        double x    = h3->GetXaxis()->GetBinCenter(binx);
-		double y    = h3->GetYaxis()->GetBinCenter(biny);
+        double x    = heff->GetXaxis()->GetBinCenter(binx);
+		double y    = heff->GetYaxis()->GetBinCenter(biny);
 		
 		double q = pow(10,y);
-		double npe = pow(q/0.0025,2); // q for where 1 pe is expected
+		double qfor1pe = 0.0025;
+		if (nlay==4) qfor1pe*=4./3.; // account for shorter 4-layer bars
+		double npe = pow(q/qfor1pe,2); // q for where 1 pe is expected
 		double w = pow(1.-exp(-npe),nlay);
 		
 		if (binx==10 && y<-2.2 && y>-2.4){
 			cout<<"q "<<q<<" npe "<<npe<<" w "<<w<<endl;
 		}
 		
-		h3->Fill(x,y,w);
+		if (nlay==2) w=1.0;
+		heff->Fill(x,y,w);
           
        }
     }
     
-    h3->SetStats(0);
-    h3->Draw("colz");
-    h3->SaveAs("eff.C");
+    heff->SetStats(0);
+    heff->Draw("colz");
+
+    if (nlay==1) heff->SaveAs("eff1.C");//unity efficiency
+    else if (nlay==3) heff->SaveAs("eff3.C");//3 layer eff
+    else if (nlay==4) heff->SaveAs("eff4.C");//4 layer eff
+    else cout<<"dont know layer "<<nlay<<endl;
+	
 }

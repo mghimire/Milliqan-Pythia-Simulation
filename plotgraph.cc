@@ -77,10 +77,8 @@ void plotgraph(TString extra) {
 
   // output amount of fb^-1 calculation is based on
   cout << "data: " << data << " fb^-1" << endl;
-  cout << endl;
 
-  // output table of analysis result points and acceptance for each pT cut and
-  // mass
+  // output table of analysis result points and acceptance for each pT cut and mass
   /*
   for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
     std::vector<mCP_anal> analyses = q_analyses[q_i];
@@ -119,13 +117,17 @@ void plotgraph(TString extra) {
   gStyle->SetOptStat(0);
   c1->SetLogz(1);
 
-  TH2D *g;
-  g = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 20, -2, 3, nch, -4, 0); // can go to 40 masses, and just 2.3 high
+  TH2D *g = new TH2D("mCPseen"+extra, "mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 41, -2, 2.3, nch+2, -4, 0.01); // can go to 40 masses, and just 2.3 high
+  TH2D *gtest = new TH2D(*g); gtest->SetName("gtest"); // a copy of the hist, to check that each bin is only filled once
 
   for (std::size_t m_i = 0; m_i < masses.size(); m_i++) {
     for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
+	  if (gtest->GetBinContent(gtest->FindBin(std::log10(masses[m_i]), std::log10(charges[q_i])))!=0){
+		  cout<<"Bin already filled at "<<masses[m_i]<<" "<<charges[q_i]<<endl;
+	  }
       if (q_analyses[q_i][m_i].mCP_seen != 0) //option to keep or reject z = 0 points
-	g->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen);
+		g->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen);
+	  gtest->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]));
     }
   }
   g->Draw("colz");
