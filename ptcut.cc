@@ -119,18 +119,22 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
       TRandom r;
       //check if it passes triangular PDF
       if (r.Uniform() <= 1.0 - pTcut/pT) {
-	if (hist){
-	  eta_hist->Fill(eta,weight);
-	}
+		if (pT < 16. * charge * charge) {// check that we have enough pT to get through the rock
+			//cout<<"stuck in rock for charge "<<charge<<endl;
+			continue;
+		}
+		if (hist){
+			eta_hist->Fill(eta,weight);
+		}
         // check if they pass eta cut for milliqan
         if (abs_eta > low_eta && abs_eta < high_eta) {
           event_sum += weight;
           event_sumsq += weight * weight;
-	  if (hist){
-	    mother_id_hist->Fill(mother_id,weight);
-	    pT_hist->Fill(pT,weight);
-	    pTHat_hist->Fill(pTHat,weight);
-	  }
+			if (hist){
+				mother_id_hist->Fill(mother_id,weight);
+				pT_hist->Fill(pT,weight);
+				pTHat_hist->Fill(pTHat,weight);
+			}
         }
         sum_noetacut += weight;
         sum_noetacutsq += weight * weight;

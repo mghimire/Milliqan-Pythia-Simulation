@@ -1,7 +1,7 @@
 void heatplotpTweight_onia1()
 {
 //=========Macro generated from canvas: c1/mCP_canvas
-//=========  (Tue Apr  9 10:53:59 2019) by ROOT version 6.14/08
+//=========  (Tue Apr  9 11:46:35 2019) by ROOT version 6.14/08
    TCanvas *c1 = new TCanvas("c1", "mCP_canvas",3,60,600,400);
    gStyle->SetOptStat(0);
    c1->Range(0,0,1,1);
@@ -1039,37 +1039,26 @@ void heatplotpTweight_onia1()
    mCPseenonia1->SetBinContent(1737,372255.9);
    mCPseenonia1->SetBinContent(1738,371950.7);
    mCPseenonia1->SetBinContent(1740,53098.68);
-   mCPseenonia1->SetBinContent(1764,416101);
+   mCPseenonia1->SetBinContent(1764,332880.8);
    mCPseenonia1->SetBinContent(1765,250320.1);
    mCPseenonia1->SetBinContent(1766,83056.78);
-   mCPseenonia1->SetBinContent(1767,83111.1);
-   mCPseenonia1->SetBinContent(1768,582914.8);
-   mCPseenonia1->SetBinContent(1769,166285.9);
-   mCPseenonia1->SetBinContent(1770,166378.1);
-   mCPseenonia1->SetBinContent(1771,249809.7);
+   mCPseenonia1->SetBinContent(1768,416367.7);
+   mCPseenonia1->SetBinContent(1769,83142.97);
+   mCPseenonia1->SetBinContent(1770,83189.04);
+   mCPseenonia1->SetBinContent(1771,166539.8);
    mCPseenonia1->SetBinContent(1772,83046.07);
    mCPseenonia1->SetBinContent(1774,249470);
-   mCPseenonia1->SetBinContent(1775,249204.1);
-   mCPseenonia1->SetBinContent(1777,332987.4);
+   mCPseenonia1->SetBinContent(1775,166136.1);
+   mCPseenonia1->SetBinContent(1777,166493.7);
    mCPseenonia1->SetBinContent(1778,83018.7);
-   mCPseenonia1->SetBinContent(1779,415432.7);
-   mCPseenonia1->SetBinContent(1780,416711.5);
+   mCPseenonia1->SetBinContent(1779,249259.6);
+   mCPseenonia1->SetBinContent(1780,166684.6);
    mCPseenonia1->SetBinContent(1781,166547.9);
    mCPseenonia1->SetBinContent(1783,83215.77);
-   mCPseenonia1->SetBinContent(1807,521687.8);
-   mCPseenonia1->SetBinContent(1808,130766.5);
-   mCPseenonia1->SetBinContent(1809,130165.8);
-   mCPseenonia1->SetBinContent(1811,522022.2);
-   mCPseenonia1->SetBinContent(1812,130300.9);
+   mCPseenonia1->SetBinContent(1807,130422);
    mCPseenonia1->SetBinContent(1813,130373.1);
    mCPseenonia1->SetBinContent(1814,130499.8);
-   mCPseenonia1->SetBinContent(1817,260644.8);
-   mCPseenonia1->SetBinContent(1818,130183.5);
-   mCPseenonia1->SetBinContent(1820,260927.4);
-   mCPseenonia1->SetBinContent(1822,130212.5);
-   mCPseenonia1->SetBinContent(1823,130613.3);
-   mCPseenonia1->SetBinContent(1824,261012.5);
-   mCPseenonia1->SetBinContent(1826,130415);
+   mCPseenonia1->SetBinContent(1817,130322.4);
    mCPseenonia1->SetBinError(44,51.91316);
    mCPseenonia1->SetBinError(45,49.96065);
    mCPseenonia1->SetBinError(46,46.60848);
@@ -2097,38 +2086,27 @@ void heatplotpTweight_onia1()
    mCPseenonia1->SetBinError(1737,372255.9);
    mCPseenonia1->SetBinError(1738,371950.7);
    mCPseenonia1->SetBinError(1740,53098.68);
-   mCPseenonia1->SetBinError(1764,416101);
+   mCPseenonia1->SetBinError(1764,332880.8);
    mCPseenonia1->SetBinError(1765,250320.1);
    mCPseenonia1->SetBinError(1766,83056.78);
-   mCPseenonia1->SetBinError(1767,83111.1);
-   mCPseenonia1->SetBinError(1768,582914.8);
-   mCPseenonia1->SetBinError(1769,166285.9);
-   mCPseenonia1->SetBinError(1770,166378.1);
-   mCPseenonia1->SetBinError(1771,249809.7);
+   mCPseenonia1->SetBinError(1768,416367.7);
+   mCPseenonia1->SetBinError(1769,83142.97);
+   mCPseenonia1->SetBinError(1770,83189.04);
+   mCPseenonia1->SetBinError(1771,166539.8);
    mCPseenonia1->SetBinError(1772,83046.07);
    mCPseenonia1->SetBinError(1774,249470);
-   mCPseenonia1->SetBinError(1775,249204.1);
-   mCPseenonia1->SetBinError(1777,332987.4);
+   mCPseenonia1->SetBinError(1775,166136.1);
+   mCPseenonia1->SetBinError(1777,166493.7);
    mCPseenonia1->SetBinError(1778,83018.7);
-   mCPseenonia1->SetBinError(1779,415432.7);
-   mCPseenonia1->SetBinError(1780,416711.5);
+   mCPseenonia1->SetBinError(1779,249259.6);
+   mCPseenonia1->SetBinError(1780,166684.6);
    mCPseenonia1->SetBinError(1781,166547.9);
    mCPseenonia1->SetBinError(1783,83215.77);
-   mCPseenonia1->SetBinError(1807,521687.8);
-   mCPseenonia1->SetBinError(1808,130766.5);
-   mCPseenonia1->SetBinError(1809,130165.8);
-   mCPseenonia1->SetBinError(1811,522022.2);
-   mCPseenonia1->SetBinError(1812,130300.9);
+   mCPseenonia1->SetBinError(1807,130422);
    mCPseenonia1->SetBinError(1813,130373.1);
    mCPseenonia1->SetBinError(1814,130499.8);
-   mCPseenonia1->SetBinError(1817,260644.8);
-   mCPseenonia1->SetBinError(1818,130183.5);
-   mCPseenonia1->SetBinError(1820,260927.4);
-   mCPseenonia1->SetBinError(1822,130212.5);
-   mCPseenonia1->SetBinError(1823,130613.3);
-   mCPseenonia1->SetBinError(1824,261012.5);
-   mCPseenonia1->SetBinError(1826,130415);
-   mCPseenonia1->SetEntries(1058);
+   mCPseenonia1->SetBinError(1817,130322.4);
+   mCPseenonia1->SetEntries(1047);
    mCPseenonia1->SetStats(0);
 
    Int_t ci;      // for color index setting

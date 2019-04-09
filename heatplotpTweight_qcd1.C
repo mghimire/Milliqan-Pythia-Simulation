@@ -1,7 +1,7 @@
 void heatplotpTweight_qcd1()
 {
 //=========Macro generated from canvas: c1/mCP_canvas
-//=========  (Tue Apr  9 10:54:43 2019) by ROOT version 6.14/08
+//=========  (Tue Apr  9 11:47:15 2019) by ROOT version 6.14/08
    TCanvas *c1 = new TCanvas("c1", "mCP_canvas",3,60,600,400);
    gStyle->SetOptStat(0);
    c1->Range(0,0,1,1);
@@ -793,8 +793,6 @@ void heatplotpTweight_qcd1()
    mCPseenqcd1->SetBinContent(1724,5904515);
    mCPseenqcd1->SetBinContent(1728,5885186);
    mCPseenqcd1->SetBinContent(1766,9237259);
-   mCPseenqcd1->SetBinContent(1767,9253503);
-   mCPseenqcd1->SetBinContent(1809,1.447655e+07);
    mCPseenqcd1->SetBinError(44,6307.32);
    mCPseenqcd1->SetBinError(45,6106.846);
    mCPseenqcd1->SetBinError(46,5656.422);
@@ -1576,9 +1574,7 @@ void heatplotpTweight_qcd1()
    mCPseenqcd1->SetBinError(1724,5904515);
    mCPseenqcd1->SetBinError(1728,5885186);
    mCPseenqcd1->SetBinError(1766,9237259);
-   mCPseenqcd1->SetBinError(1767,9253503);
-   mCPseenqcd1->SetBinError(1809,1.447655e+07);
-   mCPseenqcd1->SetEntries(783);
+   mCPseenqcd1->SetEntries(781);
    mCPseenqcd1->SetStats(0);
 
    Int_t ci;      // for color index setting
