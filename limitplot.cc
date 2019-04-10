@@ -25,8 +25,7 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra=""){
 	c2->SaveAs("plots/effheatplotpTweight"+extra+quali+"_"+heff->GetTitle()+".C");
    	c2->SaveAs("plots/effheatplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
     
-    // Now make contour plot version
-	
+    // Now make contour plot version	
 	mCPseengammaZ->SetContour(3);	
 	if (bkg==0){ // optimistic 
 		mCPseengammaZ->SetContourLevel(0,0.6);//6 in 3000/fb, for 2 bkg
@@ -48,5 +47,5 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra=""){
 	gROOT->ProcessLine(".x oldlimits.cc");
 	
 	c3->SaveAs("plots/limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".C");
-    	c3->SaveAs("plots/limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
+    c3->SaveAs("plots/limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
 }

@@ -9,7 +9,6 @@
 #include <iostream>
 #include <vector>
 
-
 // struct of data that gets analyzed
 typedef struct {
   Double_t mass;            // mCP mass

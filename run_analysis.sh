@@ -1,5 +1,5 @@
 #!/bin/bash
-make all
+
 echo "saving to dirs ening in $1 "
 mkdir -p ./dataqcd$1
 mkdir -p ./datagammaZ$1
@@ -10,13 +10,13 @@ killall py_sim
 sleep 1
 
 source environ.sh
-make
+make all
 
 NUM_START=1
 NUM_END=1 #5
-DEF_EVENTS_PER_FILE=100000
-
-nthreads=8
+DEF_EVENTS_PER_FILE=10000 #100000
+DO_EXTRA_EVENTS=0 # set to 1 to do extra events for masses that need it, or 0 for a quicker life
+NTHREADS=8
 
 nmass=40
 for type in "0" "1" "2"; do
@@ -26,23 +26,30 @@ for (( massi=0; massi<=$nmass; massi++ )); do
     EVENTS_PER_FILE=$DEF_EVENTS_PER_FILE
     if [ ${type} -eq 0 ]; then 
       if [ ${mass%.*} -ge 8 ]; then continue; fi
-      if (( $(echo "${mass} > 0.3" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
-      if [ ${mass%.*} -ge 1 ]; then EVENTS_PER_FILE=`python -c "print 100*${DEF_EVENTS_PER_FILE}"`; fi
+      if [ $DO_EXTRA_EVENTS -eq 1 ]; then
+		if (( $(echo "${mass} > 0.3" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
+		if [ ${mass%.*} -ge 1 ]; then EVENTS_PER_FILE=`python -c "print 100*${DEF_EVENTS_PER_FILE}"`; fi
+      fi
       typename="qcd";
     fi
     if [ ${type} -eq 1 ]; then
-      if (( $(echo "${mass} > 1.4" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
-      if (( $(echo "${mass} > 3.8" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
+      if [ ${mass%.*} -ge 8 ]; then continue; fi
+      if [ $DO_EXTRA_EVENTS -eq 1 ]; then
+		if (( $(echo "${mass} > 1.4" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
+		if (( $(echo "${mass} > 3.8" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
+	  fi
       typename="onia";
     fi
     if [ ${type} -eq 2 ]; then
-      if [ ${mass%.*} -ge 6 ]; then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
-      if (( $(echo "${mass} == 35.2776786619" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 100*${DEF_EVENTS_PER_FILE}"`; fi
+      if [ $DO_EXTRA_EVENTS -eq 1 ]; then
+		if [ ${mass%.*} -ge 6 ]; then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
+		if (( $(echo "${mass} == 35.2776786619" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 100*${DEF_EVENTS_PER_FILE}"`; fi
+	  fi
       typename="gammaZ";
     fi
     echo $type $typename $mass $i $EVENTS_PER_FILE
     ./py_sim -t ${type} -m ${mass} -n ${EVENTS_PER_FILE} -f data${typename}${1}/${mass}_${i}.root > pythialogfiles${1}/${typename}_${mass}_${i}.txt &
-    while [ `pgrep -c py_sim` -ge $nthreads ]; do sleep 10; done # wait for jobs to finish before starting new ones
+    while [ `pgrep -c py_sim` -ge $NTHREADS ]; do sleep 10; done # wait for jobs to finish before starting new ones
   done
 done
 done
