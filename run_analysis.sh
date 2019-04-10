@@ -1,4 +1,5 @@
 #!/bin/bash
+make all
 echo "saving to dirs ening in $1 "
 mkdir -p ./dataqcd$1
 mkdir -p ./datagammaZ$1
@@ -13,23 +14,33 @@ make
 
 NUM_START=1
 NUM_END=1 #5
-EVENTS_PER_FILE=100000
+DEF_EVENTS_PER_FILE=100000
 
 nthreads=8
 
 nmass=40
-for type in "0" "1" "2"; do  
+for type in "0" "1" "2"; do
 for (( massi=0; massi<=$nmass; massi++ )); do
-echo $nmass $massi
   mass=`python -c "print 0.01*pow(10,(4.3 * ${massi} / ${nmass} ))"`
   for ((i=NUM_START;i<=NUM_END;i++)); do
-    if [ ${type} -le 1 ]; then 
+    EVENTS_PER_FILE=$DEF_EVENTS_PER_FILE
+    if [ ${type} -eq 0 ]; then 
       if [ ${mass%.*} -ge 8 ]; then continue; fi
+      if (( $(echo "${mass} > 0.3" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
+      if [ ${mass%.*} -ge 1 ]; then EVENTS_PER_FILE=`python -c "print 100*${DEF_EVENTS_PER_FILE}"`; fi
+      typename="qcd";
     fi
-    typename="qcd"
-    if [ ${type} -eq 1 ]; then typename="onia"; fi
-    if [ ${type} -eq 2 ]; then typename="gammaZ"; fi
-    echo $type $typename $mass $i
+    if [ ${type} -eq 1 ]; then
+      if (( $(echo "${mass} > 1.4" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
+      if (( $(echo "${mass} > 3.8" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
+      typename="onia";
+    fi
+    if [ ${type} -eq 2 ]; then
+      if [ ${mass%.*} -ge 6 ]; then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
+      if (( $(echo "${mass} == 35.2776786619" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 100*${DEF_EVENTS_PER_FILE}"`; fi
+      typename="gammaZ";
+    fi
+    echo $type $typename $mass $i $EVENTS_PER_FILE
     ./py_sim -t ${type} -m ${mass} -n ${EVENTS_PER_FILE} -f data${typename}${1}/${mass}_${i}.root > pythialogfiles${1}/${typename}_${mass}_${i}.txt &
     while [ `pgrep -c py_sim` -ge $nthreads ]; do sleep 10; done # wait for jobs to finish before starting new ones
   done
@@ -44,5 +55,5 @@ ls dataonia${1}/ > filenamesonia${1}.txt
 echo "done!"
 
 #make all the plots
-./plotgraphs.sh $1
+#./plotgraphs.sh $1
 

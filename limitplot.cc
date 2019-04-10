@@ -7,7 +7,7 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra=""){
 	TH2D* mCPseenqcd = (TH2D*)gROOT->Get("mCPseenqcd"+extra);
 	TH2D* heff = (TH2D*)gROOT->Get("heff");
 	
-	TCanvas *c2 = new TCanvas("c1","mCP_canvas",0,0,600,400);	
+	TCanvas *c2 = new TCanvas("c2","mCP_canvas",0,0,600,400);	
 	mCPseengammaZ->Draw();
 	mCPseenonia->Draw();
 	if (doqcd) mCPseenqcd->Draw();
@@ -21,9 +21,9 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra=""){
 	TString quali="";
 	if (doqcd) quali="_qcd"; else quali="_noqcd";
 	if (bkg==0) quali+="_optbkg"; else quali+="_origbkg";
-	
-	c2->SaveAs("effheatplotpTweight"+extra+quali+"_"+heff->GetTitle()+".C");
-    c2->SaveAs("effheatplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
+	gSystem->Exec("mkdir plots");
+	c2->SaveAs("plots/effheatplotpTweight"+extra+quali+"_"+heff->GetTitle()+".C");
+   	c2->SaveAs("plots/effheatplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
     
     // Now make contour plot version
 	
@@ -41,12 +41,12 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra=""){
 	}
 	else cout<<"dont know bkg "<<bkg<<endl;
 
-	TCanvas *c3 = new TCanvas("c1","mCP_canvas",0,0,600,400);	
+	TCanvas *c3 = new TCanvas("c3","mCP_canvas",0,0,600,400);	
 	mCPseengammaZ->SetTitle("milliQan Sensitivity vs. Mass and Charge");
 	mCPseengammaZ->Draw("cont1");
 	mCPseengammaZ->SetLineWidth(2);	
-	gROOT->ProcessLine(".x oldlimits.C");
+	gROOT->ProcessLine(".x oldlimits.cc");
 	
-	c3->SaveAs("limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".C");
-    c3->SaveAs("limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
+	c3->SaveAs("plots/limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".C");
+    	c3->SaveAs("plots/limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
 }

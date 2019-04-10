@@ -34,18 +34,18 @@ void filleff(int nlay=1){
     TCanvas *c1 = new TCanvas("c1","mCP_canvas",0,0,600,400);
     heff->SetStats(0);
     heff->Draw("colz");
-
+    gSystem->Exec("mkdir plots");
     if (nlay==1) {
-		c1->SaveAs("eff1.C");//unity efficiency
-		c1->SaveAs("eff1.pdf");
+		c1->SaveAs("plots/eff1.C");//unity efficiency
+		c1->SaveAs("plots/eff1.pdf");
 	}
     else if (nlay==3) {
-		c1->SaveAs("eff3.C");//3 layer eff
-		c1->SaveAs("eff3.pdf");
+		c1->SaveAs("plots/eff3.C");//3 layer eff
+		c1->SaveAs("plots/eff3.pdf");
 	}
     else if (nlay==4) {
-		c1->SaveAs("eff4.C");//4 layer eff
-		c1->SaveAs("eff4.pdf");
+		c1->SaveAs("plots/eff4.C");//4 layer eff
+		c1->SaveAs("plots/eff4.pdf");
 	}
     else cout<<"dont know layer "<<nlay<<endl;
 	
