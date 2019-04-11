@@ -13,10 +13,10 @@ source environ.sh
 make all
 
 NUM_START=1
-NUM_END=1 #5
-DEF_EVENTS_PER_FILE=10000 #100000
-DO_EXTRA_EVENTS=0 # set to 1 to do extra events for masses that need it, or 0 for a quicker life
-NTHREADS=8
+NUM_END=5
+DEF_EVENTS_PER_FILE=2000
+DO_EXTRA_EVENTS=1 # set to 1 to do extra events for masses that need it, or 0 for a quicker life
+NTHREADS=64
 
 nmass=40
 for type in "0" "1" "2"; do
