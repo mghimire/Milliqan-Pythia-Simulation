@@ -14,7 +14,7 @@ make all
 
 if [ -z "$2" ]; then NUM_START=1; else NUM_START=$2; fi
 NUM_END=$(($NUM_START + 4))
-DEF_EVENTS_PER_FILE=2000
+DEF_EVENTS_PER_FILE=20000
 DO_EXTRA_EVENTS=1 # set to 1 to do extra events for masses that need it, or 0 for a quicker life
 NTHREADS=32
 
@@ -60,6 +60,9 @@ ls dataqcd${1}/ > filenamesqcd${1}.txt
 ls datagammaZ${1}/ > filenamesgammaZ${1}.txt
 ls dataonia${1}/ > filenamesonia${1}.txt
 echo "done!"
+
+#zip it
+#zip data$1.zip -r *$1 *$1.txt
 
 #make all the plots
 #./plotgraphs.sh $1
