@@ -12,8 +12,8 @@ sleep 1
 source environ.sh
 make all
 
-NUM_START=1
-NUM_END=5
+if [ -z "$2" ]; then NUM_START=1; else NUM_START=$2; fi
+NUM_END=$(($NUM_START + 4))
 DEF_EVENTS_PER_FILE=2000
 DO_EXTRA_EVENTS=1 # set to 1 to do extra events for masses that need it, or 0 for a quicker life
 NTHREADS=32
@@ -28,7 +28,7 @@ for (( massi=0; massi<=$nmass; massi++ )); do
       if [ ${mass%.*} -ge 8 ]; then continue; fi
       if [ $DO_EXTRA_EVENTS -eq 1 ]; then
 		if (( $(echo "${mass} > 0.3" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
-		if [ ${mass%.*} -ge 1 ]; then EVENTS_PER_FILE=`python -c "print 100*${DEF_EVENTS_PER_FILE}"`; fi
+		if (( $(echo "${mass} > 1.0" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 100*${DEF_EVENTS_PER_FILE}"`; fi
       fi
       typename="qcd";
     fi
@@ -36,13 +36,13 @@ for (( massi=0; massi<=$nmass; massi++ )); do
       if [ ${mass%.*} -ge 8 ]; then continue; fi
       if [ $DO_EXTRA_EVENTS -eq 1 ]; then
 		if (( $(echo "${mass} > 1.4" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
-		if (( $(echo "${mass} > 3.8" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
+		if (( $(echo "${mass} > 3.8" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 100*${DEF_EVENTS_PER_FILE}"`; fi
 	  fi
       typename="onia";
     fi
     if [ ${type} -eq 2 ]; then
       if [ $DO_EXTRA_EVENTS -eq 1 ]; then
-		if [ ${mass%.*} -ge 6 ]; then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
+		if (( $(echo "${mass} > 6.0" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 10*${DEF_EVENTS_PER_FILE}"`; fi
 		if (( $(echo "${mass} == 35.2776786619" |bc -l) )); then EVENTS_PER_FILE=`python -c "print 100*${DEF_EVENTS_PER_FILE}"`; fi
 	  fi
       typename="gammaZ";

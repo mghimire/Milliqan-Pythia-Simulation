@@ -51,6 +51,7 @@ void plotgraph(TString extra) {
           f_i++;
       } while (filenames[f_i].BeginsWith(check));
       files.push_back(massfiles);
+      cout<<"Found "<<massfiles.size()<<" files for "<<check<<endl;
   } while (f_i < filenames.size());
 
   // vector of charges we will plot
