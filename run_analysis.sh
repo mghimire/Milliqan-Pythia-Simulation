@@ -16,7 +16,7 @@ NUM_START=1
 NUM_END=5
 DEF_EVENTS_PER_FILE=2000
 DO_EXTRA_EVENTS=1 # set to 1 to do extra events for masses that need it, or 0 for a quicker life
-NTHREADS=64
+NTHREADS=32
 
 nmass=40
 for type in "0" "1" "2"; do
@@ -48,7 +48,7 @@ for (( massi=0; massi<=$nmass; massi++ )); do
       typename="gammaZ";
     fi
     echo $type $typename $mass $i $EVENTS_PER_FILE
-    ./py_sim -t ${type} -m ${mass} -n ${EVENTS_PER_FILE} -f data${typename}${1}/${mass}_${i}.root > pythialogfiles${1}/${typename}_${mass}_${i}.txt &
+    ./py_sim -t ${type} -m ${mass} -n ${EVENTS_PER_FILE} -f data${typename}${1}/${mass}_${i}.root >& pythialogfiles${1}/${typename}_${mass}_${i}.txt &
     while [ `pgrep -c py_sim` -ge $NTHREADS ]; do sleep 10; done # wait for jobs to finish before starting new ones
   done
 done
