@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#might want to run like this in case terminal dies:
+#nohup ./run_analysis.sh 14 &
+
 echo "saving to dirs ening in $1 "
 mkdir -p ./dataqcd$1
 mkdir -p ./datagammaZ$1
