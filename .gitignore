@@ -6,4 +6,5 @@
 py_sim
 .DS_Store
 plots/
+hists_*/
 

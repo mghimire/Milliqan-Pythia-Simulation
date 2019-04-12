@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
         break;
       case 'm':  // mCP mass in GeV
         mCPmass = std::stod(optarg);
-	if (mCPmass > 2.0) pTcut = 2 * mCPmass;
+		if (mCPmass > 2.0) pTcut = 2 * mCPmass;
         break;
       case 'p':  // jet pT (pTHat) cut in GeV
         manualpTcut = std::stod(optarg);
@@ -115,12 +115,18 @@ int main(int argc, char **argv) {
   }
   else if (myprocess==1){ 
        pythia.readString("Onia:all = on"); // Turn on all *onia processes
+       
+       // Apply a pT cut
+       double oniaptcut = 2.0; // was 2 GeV for Upsilon and 6.5 GeV for J/psi in original paper (as well as |eta|<2.5)
+       std::ostringstream strspT;
+	   strspT << oniaptcut;
+	   pythia.readString("PhaseSpace:pTHatMin = " + strspT.str());
   }
   else if (myprocess==2){
        pythia.readString("WeakSingleBoson:ffbar2gmZ= on"); // Turn on gamma* and Z
        
        // Apply mass cut
-       double mcut = 4.0;
+       double mcut = 2.0; // always above 2 GeV, to match original mq paper
        if (mCPmass*2. -1 > mcut){
           mcut = mCPmass*2. -1;
           std::ostringstream strsm;
