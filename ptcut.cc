@@ -42,7 +42,7 @@ Double_t calc_pT(Double_t q) {
 }
 
 mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
-                            std::vector<TString> infiles = {"out.root"}, bool hist = 0) {
+                            std::vector<TString> infiles = {"out.root"}, bool hist = 0, TString extra="") {
   mCP_anal analysis;
 
   Double_t pTcut = calc_pT(charge);
@@ -155,7 +155,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
     c->cd(4);
     eta_hist->Draw("bar0");
     c->cd();
-    TString dirname = TString("hists_eta")+Form("%f",low_eta)+TString("-")+Form("%f",high_eta);
+    TString dirname = TString("hists_eta")+Form("%f",low_eta)+TString("-")+Form("%f",high_eta)+"_"+extra;
     gSystem->Exec("mkdir "+dirname);
     TString out = dirname  + TString("/hist_") + Form("%f",analysis.mass) + TString("GeV_") + Form("%f",charge) + TString("e.pdf");
     c->SaveAs(out);

@@ -1,9 +1,11 @@
 
-root -l -q plotgraph.cc\(\"gammaZ$1\"\)
+dohist=0 # make debugging histograms
+
+root -l -q plotgraph.cc\(\"gammaZ$1\",$dohist\)
 sleep 1
-root -l -q plotgraph.cc\(\"onia$1\"\)
+root -l -q plotgraph.cc\(\"onia$1\",$dohist\)
 sleep 1
-root -l -q plotgraph.cc\(\"qcd$1\"\)
+root -l -q plotgraph.cc\(\"qcd$1\",$dohist\)
 sleep 1
 
 nlay=4 # 1 (full eff), 3, or 4
