@@ -51,8 +51,18 @@ for (( massi=0; massi<=$nmass; massi++ )); do
       typename="gammaZ";
     fi
     echo $type $typename $mass $i $EVENTS_PER_FILE
-    ./py_sim -t ${type} -m ${mass} -n ${EVENTS_PER_FILE} -f data${typename}${1}/${mass}_${i}.root >& pythialogfiles${1}/${typename}_${mass}_${i}.txt &
-    while [ `pgrep -c py_sim` -ge $NTHREADS ]; do sleep 10; done # wait for jobs to finish before starting new ones
+    donealready=0
+    if [ -e pythialogfiles${1}/${typename}_${mass}_${i}.txt ]; then
+       if [ `grep -c "tree weight is" pythialogfiles${1}/${typename}_${mass}_${i}.txt` -eq 1 ]; then
+	       donealready=1 
+	       echo "pythialogfiles${1}/${typename}_${mass}_${i}.txt already done"
+	   fi
+	fi
+	if [ $donealready -eq 0 ]; then
+	   while [ `pgrep -c py_sim` -ge $NTHREADS ]; do sleep 10; done # wait for jobs to finish before starting new ones
+	   echo "doing pythialogfiles${1}/${typename}_${mass}_${i}.txt"
+	   ./py_sim -t ${type} -m ${mass} -n ${EVENTS_PER_FILE} -f data${typename}${1}/${mass}_${i}.root >& pythialogfiles${1}/${typename}_${mass}_${i}.txt &
+    fi
   done
 done
 done
