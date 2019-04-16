@@ -24,8 +24,6 @@ The following commandline flags are available at runtime.
 
 For example, to manually configure with the default options run the program after compilation with `./py_sim -n 100 -m 0.05 -p 4 -t 0 -f out.root`.
 
-`py_sim` runs simulations using the Pythia modes `HardQCD:all`, `Onia:all`, and `WeakSingleBoson:ffbar2gmZ` for types 0, 1, and 2, respectively. The QCD mode has a default pTHat cut as defined above, while the Onia mode uses a pTHat cut of 2 GeV. The gamma*/Z mode has a mass cut that defaults at 2 GeV or twice the mCP mass (minus 1 for an extra margin for statistics), whichever is greater. This is to turn off Z production when the particles get too massive to be produced by Z bosons.
-
 There is a bash script, [`run_analysis.sh`](../master/run_analysis.sh), that loops `py_sim` over a range of masses from 0.01 to 200 GeV on a logarithmic (base 10) scale. It also sets the number of events based on the mass it is running in order to maintain a maximum of 10% error. It saves the simulation TTree files into `./data*` directories and Pythia log files into a `./pythialogfiles` directory.
 
 Analysis of Data
