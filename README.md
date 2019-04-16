@@ -36,14 +36,14 @@ There is also a bash script, [`show_hadron_BRs.sh`](../master/show_hadron_BRs.sh
 
 Generating Plots
 ----------------
-Included are also plotting ROOT macros [`plotgraph.cc`](../master/plotgraph.cc), [`filleff.cc`](../master/filleff.cc), and ['limitplot.cc'](../master/limitplot.cc).
+Included are also plotting ROOT macros [`plotgraph.cc`](../master/plotgraph.cc), [`filleff.cc`](../master/filleff.cc), and [`limitplot.cc`](../master/limitplot.cc).
 
 [`plotgraph.cc`](../master/plotgraph.cc) is called as `root -b -q -l 'plotgraph.cc("gammaZ")'` with the input string representing the type of process (qcd, onia, or gammaZ) that we want to plot. It plots heatgraphs of the number of mCP seen vs mass vs charge as well as the corresponding uncertainty. This is made
 to work in conjunction with [`run_analysis.sh`](../master/run_analysis.sh).
 
 [`filleff.cc`](../master/filleff.cc) is called as `root -b -q -l 'filleff.cc(1)'` with the input integer representing the number of layers in the milliQan detector (defaults to 1). It plots the detection efficiency of the milliQan detector vs mass vs charge. While the efficiency is independent of mass, we include it for the sake of ease in manipulating the histograms.
 
-['limitplot.cc'](../master/limitplot.cc) is called as `root -b -q -l 'limitplot.cc(0,0,"")'` with the inputs representing QCD on or off, the type of background, and an extra string that identifies the input files, respectively. It combines the heatplots, multiplies by the efficiency plot, and produces a contour plot of 3 sigma limits on the detection of mCP vs mass vs charge. It also outputs the final healtplot that was used to generate the contour plot.
+[`limitplot.cc`](../master/limitplot.cc) is called as `root -b -q -l 'limitplot.cc(0,0,"")'` with the inputs representing QCD on or off, the type of background, and an extra string that identifies the input files, respectively. It combines the heatplots, multiplies by the efficiency plot, and produces a contour plot of 3 sigma limits on the detection of mCP vs mass vs charge. It also outputs the final healtplot that was used to generate the contour plot.
 
 All three of these are made to work in conjunction with [`plotgraphs.sh`](../master/run_analysis.sh), which calls upon all three macros sequentially and generates all the aforementioned plots. All generated plots are saved in a `./plots` directory.
 
