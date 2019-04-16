@@ -25,7 +25,7 @@ using std::copy;
 
 // load ptcut.cc macro to do analysis as mCP_anal struct defined there
 
-void plotgraph(TString extra) {
+void plotgraph(TString extra, bool dohist=0) {
   // load up the filenames of files in data/ to a vector of TStrings
   std::vector<TString> filenames;
   ifstream myfile("filenames"+extra+".txt"); 
@@ -51,6 +51,7 @@ void plotgraph(TString extra) {
           f_i++;
       } while (filenames[f_i].BeginsWith(check));
       files.push_back(massfiles);
+      cout<<"Found "<<massfiles.size()<<" files for "<<check<<endl;
   } while (f_i < filenames.size());
 
   // vector of charges we will plot
@@ -69,7 +70,7 @@ void plotgraph(TString extra) {
     cout<<"charge "<<q<<endl;
     std::vector<mCP_anal> analyses;
     for (std::size_t i = 0; i < files.size(); i++) {
-      mCP_anal analysis = analyze_pythia_sim(q, files[i]);
+      mCP_anal analysis = analyze_pythia_sim(q, files[i], dohist, extra);
       analyses.push_back(analysis);
     }
     q_analyses.push_back(analyses);

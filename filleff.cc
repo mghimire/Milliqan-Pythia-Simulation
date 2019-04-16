@@ -25,7 +25,7 @@ void filleff(int nlay=1){
 			cout<<"q "<<q<<" npe "<<npe<<" w "<<w<<endl;
 		}
 		
-		if (nlay==2) w=1.0;
+		if (nlay==1) w=1.0;
 		heff->Fill(x,y,w);
           
        }
