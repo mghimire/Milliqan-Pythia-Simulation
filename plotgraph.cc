@@ -25,7 +25,7 @@ using std::copy;
 
 // load ptcut.cc macro to do analysis as mCP_anal struct defined there
 
-void plotgraph(TString extra) {
+void plotgraph(TString extra, int type=2, bool rock=1, bool dohist=0) {
   // load up the filenames of files in data/ to a vector of TStrings
   std::vector<TString> filenames;
   ifstream myfile("filenames"+extra+".txt"); 
@@ -51,6 +51,7 @@ void plotgraph(TString extra) {
           f_i++;
       } while (filenames[f_i].BeginsWith(check));
       files.push_back(massfiles);
+      cout<<"Found "<<massfiles.size()<<" files for "<<check<<endl;
   } while (f_i < filenames.size());
 
   // vector of charges we will plot
@@ -69,7 +70,7 @@ void plotgraph(TString extra) {
     cout<<"charge "<<q<<endl;
     std::vector<mCP_anal> analyses;
     for (std::size_t i = 0; i < files.size(); i++) {
-      mCP_anal analysis = analyze_pythia_sim(q, files[i]);
+      mCP_anal analysis = analyze_pythia_sim(q, files[i], type, rock, dohist, extra);
       analyses.push_back(analysis);
     }
     q_analyses.push_back(analyses);
@@ -135,9 +136,10 @@ void plotgraph(TString extra) {
   }
   g->Draw("colz");
   gSystem->Exec("mkdir plots");
-  c1->SaveAs("plots/heatplotpTweight_"+extra+".C");
-  c1->SaveAs("plots/heatplotpTweight_"+extra+".pdf");
+  TString typerock = TString("type")+Form("%d",type)+TString("_rock")+Form("%d",rock);
+  c1->SaveAs("plots/heatplotpTweight_"+typerock+"_"+extra+".C");
+  c1->SaveAs("plots/heatplotpTweight_"+typerock+"_"+extra+".pdf");
   gerror->Draw("colz");
-  c1->SaveAs("plots/heatplotpTweighterr_"+extra+".C");
-  c1->SaveAs("plots/heatplotpTweighterr_"+extra+".pdf");
+  c1->SaveAs("plots/heatplotpTweighterr_"+typerock+"_"+extra+".C");
+  c1->SaveAs("plots/heatplotpTweighterr_"+typerock+"_"+extra+".pdf");
 }

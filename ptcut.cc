@@ -9,7 +9,6 @@
 #include <iostream>
 #include <vector>
 
-
 // struct of data that gets analyzed
 typedef struct {
   Double_t mass;            // mCP mass
@@ -30,7 +29,7 @@ Double_t calc_eta(Double_t theta) {
 
 //define global variables and resulting values outside
 Double_t det_length = 3.0;
-Double_t width_tolerance = 0.05;
+Double_t width_tolerance = 0.05;// *2;//allow for wider paths?
 Double_t Bfield = 3.8;
 Double_t Bfield_R = 3.0;
 Double_t Theta = TMath::ATan(width_tolerance/det_length);
@@ -42,11 +41,11 @@ Double_t calc_pT(Double_t q) {
   return q / pTtoQ_Conv_factor;
 }
 
-mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
-                            std::vector<TString> infiles = {"out.root"}, int type = 2, bool rock = 1, bool hist = 0) {
+mCP_anal analyze_pythia_sim(Double_t charge = 1e-3, std::vector<TString> infiles = {"out.root"}, int type = 2, bool rock = 1, bool hist = 0, TString extra="") {
   mCP_anal analysis;
 
   Double_t pTcut = calc_pT(charge);
+  //cout<<"ptcut is "<<pTcut<<endl;
   
   // calculate eta/phi acceptance
   Double_t det_loc = 84.0 * TMath::Pi() / 180.0;  // detector at th=84 deg 
@@ -197,7 +196,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
     c->cd(4);
     eta_hist->Draw("bar0");
     c->cd();
-    TString dirname = TString("hists_eta")+Form("%f",low_eta)+TString("-")+Form("%f",high_eta);
+    TString dirname = TString("hists_eta")+Form("%f",low_eta)+TString("_")+Form("%f",high_eta)+TString("_type")+Form("%d",type)+TString("_rock")+Form("%d",rock)+TString("_")+extra;
     gSystem->Exec("mkdir "+dirname);
     TString out = dirname  + TString("/hist_") + Form("%f",analysis.mass) + TString("GeV_") + Form("%f",charge) + TString("e.pdf");
     c->SaveAs(out);

@@ -1,4 +1,4 @@
-void limitplot(bool doqcd=0,int bkg=0,TString extra=""){
+void limitplot(bool doqcd=0,int bkg=0,TString extra="",int type=2, bool rock=1){
 	if (doqcd) cout<<"Adding qcd"<<endl;
 	else cout<<"Not adding qcd"<<endl;
 	
@@ -22,11 +22,11 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra=""){
 	if (doqcd) quali="_qcd"; else quali="_noqcd";
 	if (bkg==0) quali+="_optbkg"; else quali+="_origbkg";
 	gSystem->Exec("mkdir plots");
-	c2->SaveAs("plots/effheatplotpTweight"+extra+quali+"_"+heff->GetTitle()+".C");
-   	c2->SaveAs("plots/effheatplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
+	TString typerock = TString("type")+Form("%d",type)+TString("_rock")+Form("%d",rock);	
+	c2->SaveAs("plots/effheatplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".C");
+   	c2->SaveAs("plots/effheatplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".pdf");
     
-    // Now make contour plot version
-	
+    // Now make contour plot version	
 	mCPseengammaZ->SetContour(3);	
 	if (bkg==0){ // optimistic 
 		mCPseengammaZ->SetContourLevel(0,0.6);//6 in 3000/fb, for 2 bkg
@@ -47,6 +47,7 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra=""){
 	mCPseengammaZ->SetLineWidth(2);	
 	gROOT->ProcessLine(".x oldlimits.cc");
 	
-	c3->SaveAs("plots/limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".C");
-    	c3->SaveAs("plots/limitplotpTweight"+extra+quali+"_"+heff->GetTitle()+".pdf");
+	
+	c3->SaveAs("plots/limitplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".C");
+        c3->SaveAs("plots/limitplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".pdf");
 }
