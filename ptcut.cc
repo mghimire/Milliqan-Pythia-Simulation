@@ -42,6 +42,9 @@ Double_t calc_pT(Double_t q) {
 }
 
 mCP_anal analyze_pythia_sim(Double_t charge = 1e-3, std::vector<TString> infiles = {"out.root"}, int type = 2, bool rock = 1, bool hist = 0, TString extra="") {
+//type mode is for pT cut type (0 for none, 1 for flat, and 3 for triangular), rock mode is for rock damping cut (0 for off, 1 for on), and hist mode is for 
+//debugging hists (0 for off, 1 for on). extra mode is for extensions (suffix) to data directories
+
   mCP_anal analysis;
 
   Double_t pTcut = calc_pT(charge);
@@ -251,6 +254,9 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3, std::vector<TString> infiles
 }
 
 void ptcut(Double_t charge, std::vector<TString> infiles = {"out.root"}, int type = 2, bool rock = 1, bool hist = 0) {
+//type mode is for pT cut type (0 for none, 1 for flat, and 3 for triangular), rock mode is for rock damping cut (0 for off, 1 for on), and hist mode is for 
+//debugging hists (0 for off, 1 for on). extra mode is for extensions (suffix) to data directories
+
   mCP_anal analysis = analyze_pythia_sim(charge, infiles, type, rock, hist);
   // output analysis calculated
   cout << "mCP mass is " << analysis.mass << " GeV" << endl;

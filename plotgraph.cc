@@ -26,6 +26,9 @@ using std::copy;
 // load ptcut.cc macro to do analysis as mCP_anal struct defined there
 
 void plotgraph(TString extra, int type=2, bool rock=1, bool dohist=0) {
+//type mode is for pT cut type (0 for none, 1 for flat, and 3 for triangular), rock mode is for rock damping cut (0 for off, 1 for on), and hist mode is for 
+//debugging hists (0 for off, 1 for on). extra mode is for extensions (suffix) to data directories
+
   // load up the filenames of files in data/ to a vector of TStrings
   std::vector<TString> filenames;
   ifstream myfile("filenames"+extra+".txt"); 

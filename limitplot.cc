@@ -1,4 +1,7 @@
 void limitplot(bool doqcd=0,int bkg=0,TString extra="",int type=2, bool rock=1){
+//type mode is for pT cut type (0 for none, 1 for flat, and 3 for triangular) and rock mode is for rock damping cut (0 for off, 1 for on) 
+//extra mode is for extensions (suffix) to data directories
+
 	if (doqcd) cout<<"Adding qcd"<<endl;
 	else cout<<"Not adding qcd"<<endl;
 	
