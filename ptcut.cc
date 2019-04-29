@@ -33,7 +33,7 @@ Double_t width_tolerance = 0.05;// *2;//allow for wider paths?
 Double_t Bfield = 3.8;
 Double_t Bfield_R = 3.0;
 Double_t Theta = TMath::ATan(width_tolerance/det_length);
-Double_t pTtoQ_Conv_factor = 3.3 * TMath::Sin(22 * Theta) / (Bfield_R * Bfield);
+Double_t pTtoQ_Conv_factor = 217.8 * TMath::Sin(Theta) / (Bfield_R * Bfield_R * Bfield);
 
 // calculate pT cut from charge based on approximate angle coming out from
 // detector
@@ -41,8 +41,10 @@ Double_t calc_pT(Double_t q) {
   return q / pTtoQ_Conv_factor;
 }
 
-mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
-                            std::vector<TString> infiles = {"out.root"}, bool hist = 0, TString extra="") {
+mCP_anal analyze_pythia_sim(Double_t charge = 1e-3, std::vector<TString> infiles = {"out.root"}, int type = 2, bool rock = 1, bool hist = 0, TString extra="") {
+//type mode is for pT cut type (0 for none, 1 for flat, and 2 for triangular), rock mode is for rock damping cut (0 for off, 1 for on), and hist mode is for 
+//debugging hists (0 for off, 1 for on). extra mode is for extensions (suffix) to data directories
+
   mCP_anal analysis;
 
   Double_t pTcut = calc_pT(charge);
@@ -116,25 +118,67 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
     for (unsigned int i = 0; i < nentries; i++) {
       sourceTree->GetEntry(i);
       Double_t abs_eta = TMath::Abs(eta);
-      TRandom r;
-      //check if it passes triangular PDF
-      if (r.Uniform() <= 1.0 - pTcut/pT) {
-		if (pT < 16. * charge * charge) {// check that we have enough pT to get through the rock
-			//cout<<"stuck in rock for charge "<<charge<<endl;
-			continue;
-		}
-		if (hist){
-			eta_hist->Fill(eta,weight);
-		}
+      if (type == 0) {
+	if (rock == 1 && pT < 16. * charge * charge) {// check that we have enough pT to get through the rock
+	  //cout<<"stuck in rock for charge "<<charge<<endl;
+	  continue;
+	}
+	if (hist){
+	  eta_hist->Fill(eta,weight);
+	}
         // check if they pass eta cut for milliqan
         if (abs_eta > low_eta && abs_eta < high_eta) {
           event_sum += weight;
           event_sumsq += weight * weight;
-			if (hist){
-				mother_id_hist->Fill(mother_id,weight);
-				pT_hist->Fill(pT,weight);
-				pTHat_hist->Fill(pTHat,weight);
-			}
+	  if (hist){
+	    mother_id_hist->Fill(mother_id,weight);
+	    pT_hist->Fill(pT,weight);
+	    pTHat_hist->Fill(pTHat,weight);
+	  }
+        }
+        sum_noetacut += weight;
+        sum_noetacutsq += weight * weight;
+      } 
+      if (type == 1 && pT >= 2*pTcut) {
+	if (rock == 1 && pT < 16. * charge * charge) {// check that we have enough pT to get through the rock
+	  //cout<<"stuck in rock for charge "<<charge<<endl;
+	  continue;
+	}
+	if (hist){
+	  eta_hist->Fill(eta,weight);
+	}
+        // check if they pass eta cut for milliqan
+        if (abs_eta > low_eta && abs_eta < high_eta) {
+          event_sum += weight;
+          event_sumsq += weight * weight;
+	  if (hist){
+	    mother_id_hist->Fill(mother_id,weight);
+	    pT_hist->Fill(pT,weight);
+	    pTHat_hist->Fill(pTHat,weight);
+	  }
+        }
+        sum_noetacut += weight;
+        sum_noetacutsq += weight * weight;
+      }
+      TRandom r;
+      //check if it passes triangular PDF
+      if (type == 2 && r.Uniform() <= 1.0 - pTcut/pT) {
+	if (rock == 1 && pT < 16. * charge * charge) {// check that we have enough pT to get through the rock
+	  //cout<<"stuck in rock for charge "<<charge<<endl;
+	  continue;
+	}
+	if (hist){
+	  eta_hist->Fill(eta,weight);
+	}
+        // check if they pass eta cut for milliqan
+        if (abs_eta > low_eta && abs_eta < high_eta) {
+          event_sum += weight;
+          event_sumsq += weight * weight;
+	  if (hist){
+	    mother_id_hist->Fill(mother_id,weight);
+	    pT_hist->Fill(pT,weight);
+	    pTHat_hist->Fill(pTHat,weight);
+	  }
         }
         sum_noetacut += weight;
         sum_noetacutsq += weight * weight;
@@ -155,7 +199,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
     c->cd(4);
     eta_hist->Draw("bar0");
     c->cd();
-    TString dirname = TString("hists_eta")+Form("%f",low_eta)+TString("-")+Form("%f",high_eta)+"_"+extra;
+    TString dirname = TString("hists_eta")+Form("%f",low_eta)+TString("_")+Form("%f",high_eta)+TString("_type")+Form("%d",type)+TString("_rock")+Form("%d",rock)+TString("_")+extra;
     gSystem->Exec("mkdir "+dirname);
     TString out = dirname  + TString("/hist_") + Form("%f",analysis.mass) + TString("GeV_") + Form("%f",charge) + TString("e.pdf");
     c->SaveAs(out);
@@ -209,8 +253,11 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3,
   return analysis;
 }
 
-void ptcut(Double_t charge, std::vector<TString> infiles = {"out.root"}, bool hist = 0) {
-  mCP_anal analysis = analyze_pythia_sim(charge, infiles, hist);
+void ptcut(Double_t charge, std::vector<TString> infiles = {"out.root"}, int type = 2, bool rock = 1, bool hist = 0) {
+//type mode is for pT cut type (0 for none, 1 for flat, and 2 for triangular), rock mode is for rock damping cut (0 for off, 1 for on), and hist mode is for 
+//debugging hists (0 for off, 1 for on). extra mode is for extensions (suffix) to data directories
+
+  mCP_anal analysis = analyze_pythia_sim(charge, infiles, type, rock, hist);
   // output analysis calculated
   cout << "mCP mass is " << analysis.mass << " GeV" << endl;
   cout << analysis.equiv_events << " equivalent events pass pT cut of " << calc_pT(charge)
