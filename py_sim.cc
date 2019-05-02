@@ -410,13 +410,16 @@ int main(int argc, char **argv) {
       std::vector<int> poss_mupair;
       // loop through daughters to find muons
       for (int d : pythia.event[i].daughterList()) {
+		  
+		//count
+		if (pythia.event[d].idAbs() == 443) n_jpsi++;
+		  
         // only check if final-state particles
         if (pythia.event[d].isFinal()) {
+		  //if (fabs(pythia.event[pythia.event[d].mother1()].eta())>2.5) continue;//cut on |eta| of mother
           if (pythia.event[d].id() == 13) mu = true;
           if (pythia.event[d].id() == -13) mubar = true;
           if (pythia.event[d].idAbs() == 13) poss_mupair.push_back(d);
-          
-          if (pythia.event[d].idAbs() == 443) n_jpsi++;
         }
       }
       // add muons to mCP list if they came in a pair
