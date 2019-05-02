@@ -15,6 +15,6 @@ nlay=4 # 1 (full eff), 3, or 4
 root -l -q filleff.cc\($nlay\)
 
 doqcd=1 # 0 or 1
-bkg=1 # 0 (optimistic) or 1 (orig)
+bkg=0 # 0 (optimistic) or 1 (orig)
 
 root -l -q plots/heatplotpTweight_type$2\_rock$3\_qcd$1.C plots/heatplotpTweighterr_type$2\_rock$3\_qcd$1.C plots/heatplotpTweight_type$2\_rock$3\_onia$1.C plots/heatplotpTweighterr_type$2\_rock$3\_onia$1.C plots/heatplotpTweight_type$2\_rock$3\_gammaZ$1.C plots/heatplotpTweighterr_type$2\_rock$3\_gammaZ$1.C plots/eff${nlay}.C limitplot.cc\($doqcd,$bkg,\"$1\"\,$2,$3\)
