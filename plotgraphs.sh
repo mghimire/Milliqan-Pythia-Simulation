@@ -2,6 +2,12 @@
 #unzip data14pt2.zip
 #rm data14pt2.zip
 
+# ./plotgraphs.sh dataextra type rock dohist
+#extra mode is for extensions (suffix) to data directories
+#type mode is for pT cut type (0 for none, 1 for flat, and 2 for triangular)
+#rock mode is for rock damping cut (0 for off, 1 for on)
+#hist mode is for debugging hists (0 for off, 1 for on)
+
 dohist=0 # make debugging histograms
 
 root -b -l -q plotgraph.cc\(\"gammaZ$1\",$2,$3,$dohist\)
