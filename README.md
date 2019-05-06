@@ -17,7 +17,7 @@ To run the simulation, pass commandline arguments as follows, or edit the [`py_s
 The following commandline flags are available at runtime.  
 `-n NUM_EVENTS`: Number of events to generate. (default: 100)  
 `-m MASS`: mCP mass in GeV. (default: 0.05)  
-`-p PT_CUT`: QCD Jet pT cut (pTHat) in GeV. (default: 4 or twice the mCP mass, whichever is greater)
+`-p PT_CUT`: QCD Jet pT cut (pTHat) in GeV. (default: 4 or twice the mCP mass, whichever is greater)  
 `-t TYPE`: Type of process to simulate (0 for QCD, 1 for Onia, and 2 for gamma*/Z). (default: 0)  
 `-f FILENAME`: Output ROOT file name. (default: "out.root")  
 `-v`: Be verbose and output found mCP information

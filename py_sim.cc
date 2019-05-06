@@ -61,6 +61,18 @@ int main(int argc, char **argv) {
   
   //for cross-checks;
   int n_jpsi=0;
+  int n_Z=0;
+  int n_Up=0;
+  int n_Up2S=0;
+  int n_pi0=0;
+  int n_psi2S=0;
+  int n_eta=0;
+  int n_omega=0;
+  int n_etav=0;
+  int n_rho0=0;
+  int n_B0=0;
+  int n_Bp=0;
+  int n_B_s0=0;
 
   // process commandline arguments
   int c;
@@ -413,6 +425,18 @@ int main(int argc, char **argv) {
 		  
 		//count
 		if (pythia.event[d].idAbs() == 443) n_jpsi++;
+		if (pythia.event[d].idAbs() == 23) n_Z++;
+		if (pythia.event[d].idAbs() == 553) n_Up++;
+		if (pythia.event[d].idAbs() == 100553) n_Up2S++;
+		if (pythia.event[d].idAbs() == 111) n_pi0++;
+		if (pythia.event[d].idAbs() == 100443) n_psi2S++;
+		if (pythia.event[d].idAbs() == 221) n_eta++;
+		if (pythia.event[d].idAbs() == 223) n_omega++;
+		if (pythia.event[d].idAbs() == 331) n_etav++;
+		if (pythia.event[d].idAbs() == 113) n_rho0++;
+		if (pythia.event[d].idAbs() == 511) n_B0++;
+		if (pythia.event[d].idAbs() == 521) n_Bp++;
+		if (pythia.event[d].idAbs() == 531) n_B_s0++;
 		  
         // only check if final-state particles
         if (pythia.event[d].isFinal()) {
@@ -504,7 +528,19 @@ int main(int argc, char **argv) {
   // output number of events
   int num_mCP = t1.GetEntries();
   cout << "Recorded " << num_mCP << " events to " << output_file << endl;
-  cout << "n_jspi = "<<n_jpsi<<endl;
+  cout << "n_jpsi = "<<n_jpsi<<endl;
+  cout << "n_Z = "<<n_Z<<endl;
+  cout << "n_Up = "<<n_Up<<endl;
+  cout << "n_Up2S = "<<n_Up2S<<endl;
+  cout << "n_pi0 = "<<n_pi0<<endl;
+  cout << "n_psi2S = "<<n_psi2S<<endl;
+  cout << "n_eta = "<<n_eta<<endl;
+  cout << "n_omega = "<<n_omega<<endl;
+  cout << "n_etav = "<<n_etav<<endl;
+  cout << "n_rho0 = "<<n_rho0<<endl;
+  cout << "n_B0 = "<<n_B0<<endl;
+  cout << "n_Bp = "<<n_Bp<<endl;
+  cout << "n_B_s0 = "<<n_B_s0<<endl;
 
   // ROOT may complain about a TList accessing an already deleted object.
   // This may be safely ignored.
