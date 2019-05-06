@@ -78,5 +78,5 @@ echo "done!"
 #zip data$1.zip -r *$1 *$1.txt
 
 #make all the plots
-#./plotgraphs.sh $1
+#./plotgraphs.sh $1 2 1 0
 

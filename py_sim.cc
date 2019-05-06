@@ -58,6 +58,9 @@ int main(int argc, char **argv) {
   bool verbose = false;
   //type of events to make
   int myprocess=0;
+  
+  //for cross-checks;
+  int n_jpsi=0;
 
   // process commandline arguments
   int c;
@@ -407,8 +410,13 @@ int main(int argc, char **argv) {
       std::vector<int> poss_mupair;
       // loop through daughters to find muons
       for (int d : pythia.event[i].daughterList()) {
+		  
+		//count
+		if (pythia.event[d].idAbs() == 443) n_jpsi++;
+		  
         // only check if final-state particles
         if (pythia.event[d].isFinal()) {
+		  //if (fabs(pythia.event[pythia.event[d].mother1()].eta())>2.5) continue;//cut on |eta| of mother
           if (pythia.event[d].id() == 13) mu = true;
           if (pythia.event[d].id() == -13) mubar = true;
           if (pythia.event[d].idAbs() == 13) poss_mupair.push_back(d);
@@ -496,6 +504,7 @@ int main(int argc, char **argv) {
   // output number of events
   int num_mCP = t1.GetEntries();
   cout << "Recorded " << num_mCP << " events to " << output_file << endl;
+  cout << "n_jspi = "<<n_jpsi<<endl;
 
   // ROOT may complain about a TList accessing an already deleted object.
   // This may be safely ignored.

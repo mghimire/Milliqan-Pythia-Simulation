@@ -1,1 +1,0 @@
-root -l -q plots/effheatplotpTweight_type0_rock0_$1\_$2\_$3\_$4.C plots/effheatplotpTweight_type1_rock0_$1\_$2\_$3\_$4.C plots/effheatplotpTweight_type1_rock1_$1\_$2\_$3\_$4.C plots/effheatplotpTweight_type2_rock0_$1\_$2\_$3\_$4.C plots/effheatplotpTweight_type2_rock1_$1\_$2\_$3\_$4.C plots/effheatplotpTweight_type1_rock1_$1.C effplots.cc\(\"$1\"\)
