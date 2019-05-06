@@ -8,7 +8,7 @@
 #4: nlay
 
 #so run like: 
-#./compareplots.sh 14pt2 qcd optbkg 4lay
+#./effplots.sh 14pt2 qcd optbkg 4lay
 
 #./plotgraphs.sh $1 0 0
 #./plotgraphs.sh $1 1 0
