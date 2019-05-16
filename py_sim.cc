@@ -68,7 +68,8 @@ int main(int argc, char **argv) {
   int n_psi2S=0;
   int n_eta=0;
   int n_omega=0;
-  int n_etav=0;
+  int n_phi=0;
+  int n_etap=0;
   int n_rho0=0;
   int n_B0=0;
   int n_Bp=0;
@@ -415,6 +416,7 @@ int main(int argc, char **argv) {
 
     // loop through particles checking daughters for mCP pairs
     for (int i = 0; i < pythia.event.size(); ++i) {
+      std::vector<int> mothers;
       // check for muon pairs
       bool mu = false;
       bool mubar = false;
@@ -422,21 +424,92 @@ int main(int argc, char **argv) {
       std::vector<int> poss_mupair;
       // loop through daughters to find muons
       for (int d : pythia.event[i].daughterList()) {
-		  
+		
 		//count
-		if (pythia.event[d].idAbs() == 443) n_jpsi++;
-		if (pythia.event[d].idAbs() == 23) n_Z++;
-		if (pythia.event[d].idAbs() == 553) n_Up++;
-		if (pythia.event[d].idAbs() == 100553) n_Up2S++;
-		if (pythia.event[d].idAbs() == 111) n_pi0++;
-		if (pythia.event[d].idAbs() == 100443) n_psi2S++;
-		if (pythia.event[d].idAbs() == 221) n_eta++;
-		if (pythia.event[d].idAbs() == 223) n_omega++;
-		if (pythia.event[d].idAbs() == 331) n_etav++;
-		if (pythia.event[d].idAbs() == 113) n_rho0++;
-		if (pythia.event[d].idAbs() == 511) n_B0++;
-		if (pythia.event[d].idAbs() == 521) n_Bp++;
-		if (pythia.event[d].idAbs() == 531) n_B_s0++;
+		if (pythia.event[d].idAbs() == 443){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_jpsi++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 23){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_Z++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 553){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_Up++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 100553){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_Up2S++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 111){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_pi0++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 100443){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_psi2S++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 221){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_eta++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 223){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_omega++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 333){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_phi++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 331){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_etap++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 113){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_rho0++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 511){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_B0++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 521){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_Bp++;
+			}
+		}
+		if (pythia.event[d].idAbs() == 531){
+			if(std::find(mothers.begin(),mothers.end(),pythia.event[pythia.event[d].mother1()].idAbs()) == mothers.end()){
+				mothers.push_back(pythia.event[pythia.event[d].mother1()].idAbs());
+				n_B_s0++;
+			}
+		}
 		  
         // only check if final-state particles
         if (pythia.event[d].isFinal()) {
@@ -536,7 +609,8 @@ int main(int argc, char **argv) {
   cout << "n_psi2S = "<<n_psi2S<<endl;
   cout << "n_eta = "<<n_eta<<endl;
   cout << "n_omega = "<<n_omega<<endl;
-  cout << "n_etav = "<<n_etav<<endl;
+  cout << "n_phi = "<<n_phi<<endl;
+  cout << "n_etap = "<<n_etap<<endl;
   cout << "n_rho0 = "<<n_rho0<<endl;
   cout << "n_B0 = "<<n_B0<<endl;
   cout << "n_Bp = "<<n_Bp<<endl;

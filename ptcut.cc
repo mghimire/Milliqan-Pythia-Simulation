@@ -189,14 +189,10 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3, std::vector<TString> infiles
   if (hist){
     TCanvas* c = new TCanvas("c", "mPC histograms",0,0,800,800);
     c->SetLogy();
-    c->Divide(2,2);
+    c->Divide(1,2);
     c->cd(1);
-    mother_id_hist->Draw("bar0");
-    c->cd(2);
     pT_hist->Draw("bar0");
-    c->cd(3);
-    pTHat_hist->Draw("bar0");
-    c->cd(4);
+    c->cd(2);
     eta_hist->Draw("bar0");
     c->cd();
     TString dirname = TString("hists_eta")+Form("%f",low_eta)+TString("_")+Form("%f",high_eta)+TString("_type")+Form("%d",type)+TString("_rock")+Form("%d",rock)+TString("_")+extra;

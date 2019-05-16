@@ -1,7 +1,7 @@
 SHELL=/usr/bin/env bash
 
-PREFIX_LIB=/cvmfs/sft.cern.ch/lcg/external/MCGenerators_lcgcmt67c/pythia8/201/x86_64-slc6-gcc48-opt/lib
-PREFIX_INCLUDE=/cvmfs/sft.cern.ch/lcg/external/MCGenerators_lcgcmt67c/pythia8/201/x86_64-slc6-gcc48-opt/include
+PREFIX_LIB=/home/data/mg5213/Documents/Research/milliQan/pythia8240/lib
+PREFIX_INCLUDE=/home/data/mg5213/Documents/Research/milliQan/pythia8240/include
 #PREFIX_LIB=/Users/gregory/Documents/classes/nyu/2018_summer/pythia/pythia8235/lib
 #PREFIX_INCLUDE=/Users/gregory/Documents/classes/nyu/2018_summer/pythia/pythia8235/include
 
