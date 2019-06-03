@@ -125,18 +125,22 @@ void plotgraph(TString extra, int type=2, bool rock=1, bool dohist=0) {
   TH2D *gtest = new TH2D(*g); gtest->SetName("gtest"); // a copy of the hist, to check that each bin is only filled once
   TH2D *gerror = new TH2D("mCPseenerr"+extra, "Uncertainty on mCP seen from "+extra+" vs Mass vs Charge; log10 of Mass (GeV); log10 of Charge (e)", 41, -2, 2.3, nch+2, -4, 0.01); // can go to 40 masses, and just 2.3 high
 
+  ofstream writefile;
+  writefile.open(extra+".csv");
+  writefile<< "Charge,Mass,mCPseen,mCPseen%err\n";
   for (std::size_t m_i = 0; m_i < masses.size(); m_i++) {
     for (std::size_t q_i = 0; q_i < charges.size(); q_i++) {
 	if (gtest->GetBinContent(gtest->FindBin(std::log10(masses[m_i]), std::log10(charges[q_i])))!=0){
 		  cout<<"Bin already filled at "<<masses[m_i]<<" "<<charges[q_i]<<endl;
 	  }
 	if (q_analyses[q_i][m_i].mCP_seen != 0) {//option to keep or reject z = 0 points
-	  if (q_i==21 && m_i==19) {//print the numbers in this bin for the by-hand cross-check
-	    cout<<q_i<<" "<<m_i<<" : " << charges[q_i]<<" "<<masses[m_i]<<" : "<<q_analyses[q_i][m_i].mCP_seen<<" "<<q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen <<endl;
-	  }
-	  if (q_i==21 && m_i==11) {//print the numbers in this bin for the by-hand cross-check
-	    cout<<q_i<<" "<<m_i<<" : " << charges[q_i]<<" "<<masses[m_i]<<" : "<<q_analyses[q_i][m_i].mCP_seen<<" "<<q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen <<endl;
-	  }
+	  //if (q_i==21 && m_i==19) {//print the numbers in this bin for the by-hand cross-check
+	    writefile << charges[q_i] << "," << masses[m_i] << "," << q_analyses[q_i][m_i].mCP_seen <<","<<q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen<<"\n"; //write to csv file
+	    cout<< q_i << " "<< charges[q_i]<<" "<< m_i << " " <<masses[m_i]<<" "<<q_analyses[q_i][m_i].mCP_seen<<" "<<q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen <<endl; //output
+	  //}
+	  //if (q_i==21 && m_i==11) {//print the numbers in this bin for the by-hand cross-check
+	  //  cout<<q_i<<" "<<m_i<<" : " << charges[q_i]<<" "<<masses[m_i]<<" : "<<q_analyses[q_i][m_i].mCP_seen<<" "<<q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen <<endl;
+	  //}
 		g->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen);
 		gerror->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen);
 	}
