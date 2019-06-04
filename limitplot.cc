@@ -1,4 +1,4 @@
-void limitplot(bool doqcd=0,int bkg=0,TString extra="",int type=2, bool rock=1){
+void limitplot(bool doqcd=0,int bkg=0,TString extra="",int type=2, bool rock=1, TString dirname="plots"){
 //type mode is for pT cut type (0 for none, 1 for flat, and 2 for triangular) and rock mode is for rock damping cut (0 for off, 1 for on) 
 //extra mode is for extensions (suffix) to data directories
 	TString typerock = TString("type")+Form("%d",type)+TString("_rock")+Form("%d",rock);
@@ -29,9 +29,9 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra="",int type=2, bool rock=1){
 	TString quali="";
 	if (doqcd) quali="_qcd"; else quali="_noqcd";
 	if (bkg==0) quali+="_optbkg"; else quali+="_origbkg";
-	gSystem->Exec("mkdir plots");	
-	c2->SaveAs("plots/effheatplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".C");
-   	c2->SaveAs("plots/effheatplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".pdf");
+	gSystem->Exec("mkdir -p "+dirname);	
+	c2->SaveAs(dirname+"/effheatplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".C");
+   	c2->SaveAs(dirname+"/effheatplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".pdf");
     	
 	TCanvas *c3 = new TCanvas("c3","mCP_canvas",0,0,600,400);	
 	mCPseenerrgammaZ->Draw();
@@ -42,8 +42,8 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra="",int type=2, bool rock=1){
 	mCPseenerrgammaZ->SetTitle("Uncertainty on mCP Detected vs. Mass and Charge");
 	mCPseenerrgammaZ->Draw("colz");
 	c3->SetLogz(1);
-	c3->SaveAs("plots/effheatplotpTweighterr_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".C");
-   	c3->SaveAs("plots/effheatplotpTweighterr_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".pdf");
+	c3->SaveAs(dirname+"/effheatplotpTweighterr_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".C");
+   	c3->SaveAs(dirname+"/effheatplotpTweighterr_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".pdf");
 
     // Now make contour plot version	
 	mCPseengammaZ->SetContour(3);	
@@ -67,6 +67,6 @@ void limitplot(bool doqcd=0,int bkg=0,TString extra="",int type=2, bool rock=1){
 	gROOT->ProcessLine(".x oldlimits.cc");
 	
 	
-	c4->SaveAs("plots/limitplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".C");
-        c4->SaveAs("plots/limitplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".pdf");
+	c4->SaveAs(dirname+"/limitplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".C");
+        c4->SaveAs(dirname+"/limitplotpTweight_"+typerock+"_"+extra+quali+"_"+heff->GetTitle()+".pdf");
 }

@@ -79,7 +79,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3, std::vector<TString> infiles
 	pTHat_hist = new TH1D("pTHat_hist", "pTHat", 100, 0, 20);
 	eta_hist = new TH1D("eta_hist", "eta", 100, -15, 15);
   }
-
+  TRandom2 r;
   // loop through input root files
   for (std::size_t f = 0; f < infiles.size(); f++) {
     // read in input file
@@ -160,7 +160,6 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3, std::vector<TString> infiles
         sum_noetacut += weight;
         sum_noetacutsq += weight * weight;
       }
-      TRandom r;
       //check if it passes triangular PDF
       if (type == 2 && r.Uniform() <= 1.0 - pTcut/pT) {
 	if (rock == 1 && pT < 16. * charge * charge) {// check that we have enough pT to get through the rock
@@ -182,7 +181,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3, std::vector<TString> infiles
         }
         sum_noetacut += weight;
         sum_noetacutsq += weight * weight;
-      }
+     }
     }
     EventFile->Close();
   }
@@ -234,7 +233,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3, std::vector<TString> infiles
   final_reweight *= 1e15;               			// b to fb
   final_reweight *= data;               			// data in fb^-1
   final_reweight *= charge * charge;    			// multiply by millicharge^2
-  final_reweight *= phi_acceptance;     			// phi acceptance
+  final_reweight *= phi_acceptance*1.5;     			// phi acceptance (1.5 for demonstrator with 6 SLP instead of 4 SLP)
   final_reweight *= actual_eta_width / (high_eta - low_eta);  	// adjust for the large eta width
   final_reweight *= 0.5;                			// adjust for having both + and - eta
 

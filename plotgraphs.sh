@@ -3,24 +3,33 @@
 #rm data14pt2.zip
 
 # ./plotgraphs.sh dataextra type rock dohist
-#extra mode is for extensions (suffix) to data directories
-#type mode is for pT cut type (0 for none, 1 for flat, and 2 for triangular)
-#rock mode is for rock damping cut (0 for off, 1 for on)
+#$1 extra mode is for extensions (suffix) to data directories
+#$2 type mode is for pT cut type (0 for none, 1 for flat, and 2 for triangular)
+#$3 rock mode is for rock damping cut (0 for off, 1 for on)
+#$4 eff mode is for the SLP efficiency we are using (0 for 100% eff and 1-6 for the 6 SLPs of demonstrator)
+#$5 minNPE mode is to set the minimum number of NPE required to set efficiency
 #hist mode is for debugging hists (0 for off, 1 for on)
+#dirname mode is to set the name of directory to save plots into
 
 dohist=0 # make debugging histograms
+dirname=newplots
 
-root -b -l -q plotgraph.cc\(\"gammaZ$1\",$2,$3,$dohist\)
-sleep 1
-root -b -l -q plotgraph.cc\(\"onia$1\",$2,$3,$dohist\)
-sleep 1
-root -b -l -q plotgraph.cc\(\"qcd$1\",$2,$3,$dohist\)
-sleep 1
+#root -b -l -q plotgraph.cc\(\"gammaZ$1\",$2,$3,$dohist,\"$dirname\"\)
+#sleep 1
+#root -b -l -q plotgraph.cc\(\"onia$1\",$2,$3,$dohist,\"$dirname\"\)
+#sleep 1
+#root -b -l -q plotgraph.cc\(\"qcd$1\",$2,$3,$dohist,\"$dirname\"\)
+#sleep 1
 
-nlay=4 # 1 (full eff), 3, or 4
-root -l -q filleff.cc\($nlay\)
+#nlay=4 # 1 (full eff), 3, or 4 #options for old 
+#root -l -q filleff.cc\($nlay,$dirname\)
+
+root -b -l -q SLPeff.cc\(\"$4\",\"$dirname\",$5\)
+
+changedname=${5/./p}
+echo changedname
 
 doqcd=1 # 0 or 1
 bkg=0 # 0 (optimistic) or 1 (orig)
 
-root -l -q plots/heatplotpTweight_type$2\_rock$3\_qcd$1.C plots/heatplotpTweighterr_type$2\_rock$3\_qcd$1.C plots/heatplotpTweight_type$2\_rock$3\_onia$1.C plots/heatplotpTweighterr_type$2\_rock$3\_onia$1.C plots/heatplotpTweight_type$2\_rock$3\_gammaZ$1.C plots/heatplotpTweighterr_type$2\_rock$3\_gammaZ$1.C plots/eff${nlay}.C limitplot.cc\($doqcd,$bkg,\"$1\"\,$2,$3\)
+root -b -l -q $dirname/heatplotpTweight_type$2\_rock$3\_qcd$1.C $dirname/heatplotpTweighterr_type$2\_rock$3\_qcd$1.C $dirname/heatplotpTweight_type$2\_rock$3\_onia$1.C $dirname/heatplotpTweighterr_type$2\_rock$3\_onia$1.C $dirname/heatplotpTweight_type$2\_rock$3\_gammaZ$1.C $dirname/heatplotpTweighterr_type$2\_rock$3\_gammaZ$1.C $dirname/SLP$4\_minNPE$changedname.C limitplot.cc\($doqcd,$bkg,\"$1\"\,$2,$3,\"$dirname\"\)

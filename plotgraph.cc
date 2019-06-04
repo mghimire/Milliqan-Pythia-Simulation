@@ -25,7 +25,7 @@ using std::copy;
 
 // load ptcut.cc macro to do analysis as mCP_anal struct defined there
 
-void plotgraph(TString extra, int type=2, bool rock=1, bool dohist=0) {
+void plotgraph(TString extra, int type=2, bool rock=1, bool dohist=0, TString dirname="plots") {
 //type mode is for pT cut type (0 for none, 1 for flat, and 2 for triangular), rock mode is for rock damping cut (0 for off, 1 for on), and hist mode is for 
 //debugging hists (0 for off, 1 for on). extra mode is for extensions (suffix) to data directories
 
@@ -133,14 +133,14 @@ void plotgraph(TString extra, int type=2, bool rock=1, bool dohist=0) {
 	if (gtest->GetBinContent(gtest->FindBin(std::log10(masses[m_i]), std::log10(charges[q_i])))!=0){
 		  cout<<"Bin already filled at "<<masses[m_i]<<" "<<charges[q_i]<<endl;
 	  }
-	if (q_analyses[q_i][m_i].mCP_seen != 0) {//option to keep or reject z = 0 points
-	  //if (q_i==21 && m_i==19) {//print the numbers in this bin for the by-hand cross-check
+	//if (q_i==21 && m_i==19) {//print the numbers in this bin for the by-hand cross-check
 	    writefile << charges[q_i] << "," << masses[m_i] << "," << q_analyses[q_i][m_i].mCP_seen <<","<<q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen<<"\n"; //write to csv file
 	    cout<< q_i << " "<< charges[q_i]<<" "<< m_i << " " <<masses[m_i]<<" "<<q_analyses[q_i][m_i].mCP_seen<<" "<<q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen <<endl; //output
 	  //}
 	  //if (q_i==21 && m_i==11) {//print the numbers in this bin for the by-hand cross-check
 	  //  cout<<q_i<<" "<<m_i<<" : " << charges[q_i]<<" "<<masses[m_i]<<" : "<<q_analyses[q_i][m_i].mCP_seen<<" "<<q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen <<endl;
 	  //}
+	if (q_analyses[q_i][m_i].mCP_seen != 0) {//option to keep or reject z = 0 points
 		g->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen);
 		gerror->Fill(std::log10(masses[m_i]), std::log10(charges[q_i]), q_analyses[q_i][m_i].mCP_seen_err/q_analyses[q_i][m_i].mCP_seen);
 	}
@@ -148,11 +148,11 @@ void plotgraph(TString extra, int type=2, bool rock=1, bool dohist=0) {
     }
   }
   g->Draw("colz");
-  gSystem->Exec("mkdir plots");
+  gSystem->Exec("mkdir -p " + dirname);
   TString typerock = TString("type")+Form("%d",type)+TString("_rock")+Form("%d",rock);
-  c1->SaveAs("plots/heatplotpTweight_"+typerock+"_"+extra+".C");
-  c1->SaveAs("plots/heatplotpTweight_"+typerock+"_"+extra+".pdf");
+  c1->SaveAs(dirname + "/heatplotpTweight_"+typerock+"_"+extra+".C");
+  c1->SaveAs(dirname + "/heatplotpTweight_"+typerock+"_"+extra+".pdf");
   gerror->Draw("colz");
-  c1->SaveAs("plots/heatplotpTweighterr_"+typerock+"_"+extra+".C");
-  c1->SaveAs("plots/heatplotpTweighterr_"+typerock+"_"+extra+".pdf");
+  c1->SaveAs(dirname + "/heatplotpTweighterr_"+typerock+"_"+extra+".C");
+  c1->SaveAs(dirname + "/heatplotpTweighterr_"+typerock+"_"+extra+".pdf");
 }
