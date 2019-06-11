@@ -14,6 +14,8 @@
 dohist=0 # make debugging histograms
 dirname=newplots
 
+
+#do this plot generation once per dataset and comment out for limitplot analyses
 #root -b -l -q plotgraph.cc\(\"gammaZ$1\",$2,$3,$dohist,\"$dirname\"\)
 #sleep 1
 #root -b -l -q plotgraph.cc\(\"onia$1\",$2,$3,$dohist,\"$dirname\"\)
@@ -24,12 +26,12 @@ dirname=newplots
 #nlay=4 # 1 (full eff), 3, or 4 #options for old 
 #root -l -q filleff.cc\($nlay,$dirname\)
 
-root -b -l -q SLPeff.cc\(\"$4\",\"$dirname\",$5\)
+root -b -l -q SLPeff.cc\(\"$4\",$5,\"$dirname\"\)
 
 changedname=${5/./p}
 echo changedname
 
 doqcd=1 # 0 or 1
-bkg=0 # 0 (optimistic) or 1 (orig)
+bkg=0 # 0 (demonstrator) or 1 (orig)
 
-root -b -l -q $dirname/heatplotpTweight_type$2\_rock$3\_qcd$1.C $dirname/heatplotpTweighterr_type$2\_rock$3\_qcd$1.C $dirname/heatplotpTweight_type$2\_rock$3\_onia$1.C $dirname/heatplotpTweighterr_type$2\_rock$3\_onia$1.C $dirname/heatplotpTweight_type$2\_rock$3\_gammaZ$1.C $dirname/heatplotpTweighterr_type$2\_rock$3\_gammaZ$1.C $dirname/SLP$4\_minNPE$changedname.C limitplot.cc\($doqcd,$bkg,\"$1\"\,$2,$3,\"$dirname\"\)
+root -b -l -q $dirname/heatplotpTweight_type$2\_rock$3\_qcd$1.C $dirname/heatplotpTweighterr_type$2\_rock$3\_qcd$1.C $dirname/heatplotpTweight_type$2\_rock$3\_onia$1.C $dirname/heatplotpTweighterr_type$2\_rock$3\_onia$1.C $dirname/heatplotpTweight_type$2\_rock$3\_gammaZ$1.C $dirname/heatplotpTweighterr_type$2\_rock$3\_gammaZ$1.C $dirname/pathTuple$4/minNPE$changedname/SLP$4\_minNPE$changedname.C backgroundPerHour.C limitplot.cc\($doqcd,$bkg,\"$1\"\,$2,$3,$5,\"$dirname\"\)

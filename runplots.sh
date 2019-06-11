@@ -1,4 +1,7 @@
 #!/bin/bash
+#$1 extra mode is for extensions (suffix) to data directories
+#$2 type mode is for pT cut type (0 for none, 1 for flat, and 2 for triangular)
+#$3 rock mode is for rock damping cut (0 for off, 1 for on)
 
 declare -a SLPnames=("4_8_12"
 		     "5_9_13"
@@ -22,7 +25,7 @@ for SLPname in "${SLPnames[@]}"
 do
 	for minNPE in "${minNPEs[@]}"
 	do
-	./plotgraphs.sh 14pt2 2 1 ${SLPname} ${minNPE}
+	./plotgraphs.sh $1 $2 $3 ${SLPname} ${minNPE}
 	done
 done
 

@@ -233,7 +233,7 @@ mCP_anal analyze_pythia_sim(Double_t charge = 1e-3, std::vector<TString> infiles
   final_reweight *= 1e15;               			// b to fb
   final_reweight *= data;               			// data in fb^-1
   final_reweight *= charge * charge;    			// multiply by millicharge^2
-  final_reweight *= phi_acceptance*1.5;     			// phi acceptance (1.5 for demonstrator with 6 SLP instead of 4 SLP)
+  final_reweight *= phi_acceptance;     			// phi acceptance
   final_reweight *= actual_eta_width / (high_eta - low_eta);  	// adjust for the large eta width
   final_reweight *= 0.5;                			// adjust for having both + and - eta
 
